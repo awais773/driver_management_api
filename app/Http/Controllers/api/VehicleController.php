@@ -27,7 +27,7 @@ class VehicleController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255|unique:users',
+            // 'email' => 'required|string|email|max:255|unique:users',
         ]);
 
         if ($validator->fails()) {
@@ -38,24 +38,20 @@ class VehicleController extends Controller
 
             ], 400);
         } {
-            $vehicles = Vehicle::create([
-                'id' => $request->id,
-                'name' => $request->name,
-                'vehicle_company' => $request->vehicle_company,
-                'description' => $request->description,
-                'car_make' => $request->car_make,
-                'car_model' => $request->car_model,
-                'car_color' => $request->car_color,
-                'car_number' => $request->car_number,
-                'model_year' => $request->model_year,
-                'registration' => $request->registration,
-                'equipment' => $request->equipment,
-                // 'block'=> $request->block,
-            ]);
-
+       $vehicles = Vehicle::create($request->post());
+      if ($file = $request->file('image')) {
+            $video_name = md5(rand(1000, 10000));
+            $ext = strtolower($file->getClientOriginalExtension());
+            $video_full_name = $video_name . '.' . $ext;
+            $upload_path = 'vehiceImage/';
+            $video_url = $upload_path . $video_full_name;
+            $file->move($upload_path, $video_url);
+            $vehicles->image = $video_url;
+        };
+      $vehicles->save();
             return response()->json([
                 'success' => true,
-                'message' => 'User Create successfull',
+                'message' => 'vehicle Create successfull',
                 'date' => $vehicles,
             ], 200);
         }
@@ -72,34 +68,64 @@ class VehicleController extends Controller
             'data' => $program,
         ]);
     }
-    public function update(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            // 'name' => 'required|string|max:255',
-        ]);
+  
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
+      public function update(Request $request, $id)
+    {
+
+        $obj = Vehicle::find($id);
+         if ($obj) {
+            if (!empty($request->input('name'))) {
+                $obj->name = $request->input('name');
+            }
+            if (!empty($request->input('vehicle_company'))) {
+                $obj->vehicle_company = $request->input('vehicle_company');
+            }
+            if (!empty($request->input('description'))) {
+                $obj->description = $request->input('description');
+            }
+            if (!empty($request->input('car_make'))) {
+                $obj->car_make = $request->input('car_make');
+            }
+            if (!empty($request->input('car_model'))) {
+                $obj->car_model = $request->input('car_model');
+            }
+            if (!empty($request->input('car_color'))) {
+                $obj->car_color = $request->input('car_color');
+            }
+            if (!empty($request->input('car_number'))) {
+                $obj->car_number = $request->input('car_number');
+            }
+            if (!empty($request->input('model_year'))) {
+                $obj->model_year = Hash::make($request->input('model_year'));
+            }
+            if (!empty($request->input('registration_number'))) {
+                $obj->registration_number = $request->input('registration_number');
+            }
+            if (!empty($request->input('equipment'))) {
+                $obj->equipment = $request->input('equipment');
+            }
+            if (!empty($request->input('vehicle_id'))) {
+                $obj->vehicle_id = $request->input('vehicle_id');
+            }
+
+        if ($file = $request->file('image')) {
+            $video_name = md5(rand(1000, 10000));
+            $ext = strtolower($file->getClientOriginalExtension());
+            $video_full_name = $video_name . '.' . $ext;
+            $upload_path = 'vehicleImage/';
+            $video_url = $upload_path . $video_full_name;
+            $file->move($upload_path, $video_url);
+            $obj->image = $video_url;
+        };
+             $obj->save();
+
         }
-        $vehicle = Vehicle::find($id);
-          $vehicle->role_id = $request->role_id;
-        $vehicle->name = $request->name;
-        $vehicle->vehicle_company = $request->vehicle_company;
-        $vehicle->description = $request->description;
-        $vehicle->car_make = $request->car_make;
-        $vehicle->car_model = $request->car_model;
-        $vehicle->car_color = $request->car_color;
-        $vehicle->car_number = $request->car_number;
-        $vehicle->model_year = $request->model_year;
-        $vehicle->registration = $request->registration;
-        $vehicle->equipment = $request->equipment;
-        // $program->block = $request->block;
-        $vehicle->update();
         return response()->json([
             'success' => true,
-            'message' => 'User updated successfully.',
-            'data' => $vehicle,
-        ], 200);
+            'message' => 'Vehicle is updated successfully',
+            'data' => $obj,
+        ]);
     }
 
     public function destroy($id)

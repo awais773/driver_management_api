@@ -25,6 +25,7 @@ public function up()
         $table->string('model_year')->nullable();
         $table->string('registration_number')->nullable();
         $table->string('equipment')->nullable();
+        $table->string('image')->nullable();
 
 
         $table->timestamps();
