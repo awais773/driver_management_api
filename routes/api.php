@@ -38,7 +38,7 @@ Route::post('/forgotPassword', [App\Http\Controllers\api\AuthController::class, 
 Route::post('/updatePassword', [App\Http\Controllers\api\AuthController::class, 'updatePassword']);
 
 
-               //blogs  
+               //blogs
 
 Route::post('addBlog',[App\Http\Controllers\api\AdminAuthController::class,'addBlog']);
 Route::get('blogGet',[App\Http\Controllers\api\AdminAuthController::class,'blogGet']);
@@ -51,6 +51,7 @@ Route::post('/otp/verify', [App\Http\Controllers\api\AuthController::class, 'otp
 
     ///  contact
 Route::apiResource('contacts', App\Http\Controllers\api\ContactController::class);
+Route::apiResource('drivers', App\Http\Controllers\api\DriverController::class);
 
 
 
