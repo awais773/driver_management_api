@@ -138,6 +138,15 @@ class DriverController extends Controller
             if (!empty($request->input('salary'))) {
                 $obj->salary = $request->input('salary');
             }
+             if (!empty($request->input('salary_fix'))) {
+                $obj->salary_fix = $request->input('salary_fix');
+            }
+             if (!empty($request->input('salary_commission'))) {
+                $obj->salary_commission = $request->input('salary_commission');
+            }
+             if (!empty($request->input('hourly_enter_amount'))) {
+                $obj->hourly_enter_amount = $request->input('hourly_enter_amount');
+            }
             if (!empty($request->input('bank_name'))) {
                 $obj->bank_name = $request->input('bank_name');
             }

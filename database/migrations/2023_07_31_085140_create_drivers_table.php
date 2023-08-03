@@ -26,6 +26,9 @@ return new class extends Migration
             $table->string('date_of_birth')->nullable();
             $table->string('profile_picture')->nullable();
             $table->string('salary')->nullable();
+            $table->string('salary_fix')->nullable();
+            $table->string('salary_commission')->nullable();
+            $table->string('hourly_enter_amount')->nullable();
             $table->string('bank_name')->nullable();
             $table->string('bank_title')->nullable();
             $table->string('bank_account_number')->nullable();
