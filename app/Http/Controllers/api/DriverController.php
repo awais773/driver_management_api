@@ -28,7 +28,7 @@ class DriverController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255|unique:users',
+            // 'email' => 'required|string|email|max:255|unique:users',
         ]);
 
         if ($validator->fails()) {
@@ -156,8 +156,8 @@ class DriverController extends Controller
             if (!empty($request->input('bank_account_number'))) {
                 $obj->bank_account_number = $request->input('bank_account_number');
             }
-             if (!empty($request->input('company_name_own'))) {
-                $obj->company_name_own =  json_encode($request->input('company_name_own'));
+            if (!empty($request->input('company_name_own'))) {
+                $obj->company_name_own = $request->input('company_name_own');
             }
              if (!empty($request->input('bank_upload_document'))) {
                 $obj->bank_upload_document = $request->input('bank_upload_document');
@@ -165,8 +165,8 @@ class DriverController extends Controller
             if (!empty($request->input('taxi_driving_liscence'))) {
                 $obj->taxi_driving_liscence = $request->input('taxi_driving_liscence');
             }
-           if (!empty($request->input('bank_emergency_contact_name'))) {
-                $obj->bank_emergency_contact_name =  json_encode($request->input('bank_emergency_contact_name'));
+            if (!empty($request->input('bank_emergency_contact_name'))) {
+                $obj->bank_emergency_contact_name = $request->input('bank_emergency_contact_name');
             }
             if (!empty($request->input('company_name'))) {
                 $obj->company_name = $request->input('company_name');
@@ -184,6 +184,30 @@ class DriverController extends Controller
             if (!empty($request->input('vehicle_id'))) {
                 $obj->vehicle_id = $request->input('vehicle_id');
             }
+
+            if (!empty($request->input('status'))) {
+                $obj->status = $request->input('status');
+            }
+
+            if ($file = $request->file('profile_picture')) {
+                $video_name = md5(rand(1000, 10000));
+                $ext = strtolower($file->getClientOriginalExtension());
+                $video_full_name = $video_name . '.' . $ext;
+                $upload_path = 'driverImage/';
+                $video_url = $upload_path . $video_full_name;
+                $file->move($upload_path, $video_url);
+                $obj->profile_picture = $video_url;
+            }
+            if ($file = $request->file('company_document')) {
+                $video_name = md5(rand(1000, 10000));
+                $ext = strtolower($file->getClientOriginalExtension());
+                $video_full_name = $video_name . '.' . $ext;
+                $upload_path = 'companyDocument/';
+                $video_url = $upload_path . $video_full_name;
+                $file->move($upload_path, $video_url);
+                $obj->company_document = $video_url;
+            }
+
              $obj->save();
 
         }

@@ -53,6 +53,8 @@ Route::post('/otp/verify', [App\Http\Controllers\api\AuthController::class, 'otp
 Route::apiResource('contacts', App\Http\Controllers\api\ContactController::class);
     //    Driver
 Route::apiResource('drivers', App\Http\Controllers\api\DriverController::class);
+Route::post('/driversUpdate/{id}', [App\Http\Controllers\api\DriverController::class, 'update']);
+
         //  Vehicle
 Route::apiResource('vehicle', App\Http\Controllers\api\VehicleController::class);
 
