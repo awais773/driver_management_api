@@ -42,7 +42,14 @@ return new class extends Migration
             $table->string('owner_number')->nullable();
             $table->string('company_document')->nullable();
             $table->unsignedBigInteger('vehicle_id')->nullable();
-
+            $table->string('vehicle_name')->nullable();
+            $table->string('vehicle_company')->nullable();
+            $table->string('description')->nullable();
+            $table->string('car_make')->nullable();
+            $table->string('car_model')->nullable();
+            $table->string('car_color')->nullable();
+            $table->string('car_number')->nullable();
+            $table->string('vehicle_image')->nullable();
             $table->timestamps();
         });
     }

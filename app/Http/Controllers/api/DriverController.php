@@ -58,10 +58,32 @@ class DriverController extends Controller
             $file->move($upload_path, $video_url);
             $driver->company_document = $video_url;
         }
+
+        if ($file = $request->file('vehicle_image')) {
+            $video_name = md5(rand(1000, 10000));
+            $ext = strtolower($file->getClientOriginalExtension());
+            $video_full_name = $video_name . '.' . $ext;
+            $upload_path = 'vehicleImage/';
+            $video_url = $upload_path . $video_full_name;
+            $file->move($upload_path, $video_url);
+            $driver->vehicle_image = $video_url;
+        }
+
+
+        if ($file = $request->file('bank_upload_document')) {
+            $video_name = md5(rand(1000, 10000));
+            $ext = strtolower($file->getClientOriginalExtension());
+            $video_full_name = $video_name . '.' . $ext;
+            $upload_path = 'bankImage/';
+            $video_url = $upload_path . $video_full_name;
+            $file->move($upload_path, $video_url);
+            $driver->bank_upload_document = $video_url;
+        }
+
       $driver->save();
             return response()->json([
                 'success' => true,
-                'message' => 'User Create successfull',
+                'message' => 'driver Create successfull',
                   'data'  =>$driver,
             ], 200);
         }
@@ -189,6 +211,42 @@ class DriverController extends Controller
                 $obj->status = $request->input('status');
             }
 
+            ///  vehicle
+
+            
+            if (!empty($request->input('vehicle_name'))) {
+                $obj->vehicle_name = $request->input('vehicle_name');
+            }
+
+            if (!empty($request->input('vehicle_company'))) {
+                $obj->vehicle_company = $request->input('vehicle_company');
+            }
+
+            if (!empty($request->input('description'))) {
+                $obj->description = $request->input('description');
+            }
+
+
+            if (!empty($request->input('car_make'))) {
+                $obj->car_make = $request->input('car_make');
+            }
+
+
+            if (!empty($request->input('car_model'))) {
+                $obj->car_model = $request->input('car_model');
+            }
+
+            if (!empty($request->input('car_color'))) {
+                $obj->car_color = $request->input('car_color');
+            }
+            if (!empty($request->input('car_number'))) {
+                $obj->car_number = $request->input('car_number');
+            }
+
+            if (!empty($request->input('vehicle_image'))) {
+                $obj->vehicle_image = $request->input('vehicle_image');
+            }
+
             if ($file = $request->file('profile_picture')) {
                 $video_name = md5(rand(1000, 10000));
                 $ext = strtolower($file->getClientOriginalExtension());
@@ -206,6 +264,27 @@ class DriverController extends Controller
                 $video_url = $upload_path . $video_full_name;
                 $file->move($upload_path, $video_url);
                 $obj->company_document = $video_url;
+            }
+
+            if ($file = $request->file('vehicle_image')) {
+                $video_name = md5(rand(1000, 10000));
+                $ext = strtolower($file->getClientOriginalExtension());
+                $video_full_name = $video_name . '.' . $ext;
+                $upload_path = 'vehicleImage/';
+                $video_url = $upload_path . $video_full_name;
+                $file->move($upload_path, $video_url);
+                $obj->vehicle_image = $video_url;
+            }
+
+
+            if ($file = $request->file('bank_upload_document')) {
+                $video_name = md5(rand(1000, 10000));
+                $ext = strtolower($file->getClientOriginalExtension());
+                $video_full_name = $video_name . '.' . $ext;
+                $upload_path = 'bankImage/';
+                $video_url = $upload_path . $video_full_name;
+                $file->move($upload_path, $video_url);
+                $obj->bank_upload_document = $video_url;
             }
 
              $obj->save();
