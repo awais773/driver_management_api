@@ -149,7 +149,7 @@ class DriverController extends Controller
                 $obj->emergency_number = $request->input('emergency_number');
             }
             if (!empty($request->input('address'))) {
-                $obj->address = Hash::make($request->input('address'));
+                $obj->address = $request->input('address');
             }
             if (!empty($request->input('date_of_birth'))) {
                 $obj->date_of_birth = $request->input('date_of_birth');
