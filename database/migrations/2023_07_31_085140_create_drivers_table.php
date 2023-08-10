@@ -50,6 +50,7 @@ return new class extends Migration
             $table->string('car_color')->nullable();
             $table->string('car_number')->nullable();
             $table->string('vehicle_image')->nullable();
+            $table->string('total_number_hour')->nullable();
             $table->timestamps();
         });
     }

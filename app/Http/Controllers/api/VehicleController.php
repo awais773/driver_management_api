@@ -105,8 +105,52 @@ class VehicleController extends Controller
             if (!empty($request->input('equipment'))) {
                 $obj->equipment = $request->input('equipment');
             }
-            if (!empty($request->input('vehicle_id'))) {
-                $obj->vehicle_id = $request->input('vehicle_id');
+
+            if (!empty($request->input('vehicle_type'))) {
+                $obj->vehicle_type = $request->input('vehicle_type');
+            }
+            if (!empty($request->input('last_inspection'))) {
+                $obj->last_inspection = $request->input('last_inspection');
+            }
+            if (!empty($request->input('next_inspection'))) {
+                $obj->next_inspection = $request->input('next_inspection');
+            }
+            if (!empty($request->input('insurance'))) {
+                $obj->insurance = $request->input('insurance');
+            }
+            if (!empty($request->input('texameter_inspection_date'))) {
+                $obj->texameter_inspection_date = $request->input('texameter_inspection_date');
+            }
+            if (!empty($request->input('category_of_vehicle'))) {
+                $obj->category_of_vehicle = $request->input('category_of_vehicle');
+            }
+            if (!empty($request->input('vendor_name'))) {
+                $obj->vendor_name = $request->input('vendor_name');
+            }
+            if (!empty($request->input('insurance_company_name'))) {
+                $obj->insurance_company_name = $request->input('insurance_company_name');
+            }
+            if (!empty($request->input('car_maintenance_feature'))) {
+                $obj->car_maintenance_feature = $request->input('car_maintenance_feature');
+            }
+            if (!empty($request->input('select_equipment'))) {
+                $obj->select_equipment = $request->input('select_equipment');
+            }
+
+            if (!empty($request->input('running'))) {
+                $obj->running = $request->input('running');
+            }
+            if (!empty($request->input('oil_change'))) {
+                $obj->oil_change = $request->input('oil_change');
+            }
+            if (!empty($request->input('mileage'))) {
+                $obj->mileage = $request->input('mileage');
+            }
+            if (!empty($request->input('accidental_claim'))) {
+                $obj->accidental_claim = $request->input('accidental_claim');
+            }
+            if (!empty($request->input('other_expense'))) {
+                $obj->other_expense = $request->input('other_expense');
             }
 
         if ($file = $request->file('image')) {

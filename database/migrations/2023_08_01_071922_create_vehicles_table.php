@@ -26,6 +26,21 @@ public function up()
         $table->string('registration_number')->nullable();
         $table->string('equipment')->nullable();
         $table->string('image')->nullable();
+        $table->string('vehicle_type')->nullable();
+        $table->string('last_inspection')->nullable();
+        $table->string('insurance')->nullable();
+        $table->string('texameter_inspection_date')->nullable();
+        $table->string('next_inspection')->nullable();
+        $table->string('category_of_vehicle')->nullable();
+        $table->string('vendor_name')->nullable();
+        $table->string('insurance_company_name')->nullable();
+        $table->string('car_maintenance_feature')->nullable();
+        $table->string('select_equipment')->nullable();
+        $table->string('running')->nullable();
+        $table->string('oil_change')->nullable();
+        $table->string('mileage')->nullable();
+        $table->string('accidental_claim')->nullable();
+        $table->string('other_expense')->nullable();
         $table->timestamps();
 
     });

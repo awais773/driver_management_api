@@ -211,6 +211,11 @@ class DriverController extends Controller
                 $obj->status = $request->input('status');
             }
 
+            if (!empty($request->input('total_number_hour'))) {
+                $obj->total_number_hour = $request->input('total_number_hour');
+            }
+
+
             ///  vehicle
 
             
