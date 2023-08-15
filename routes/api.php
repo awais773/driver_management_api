@@ -57,6 +57,8 @@ Route::post('/driversUpdate/{id}', [App\Http\Controllers\api\DriverController::c
 
         //  Vehicle
 Route::apiResource('vehicle', App\Http\Controllers\api\VehicleController::class);
+Route::post('/vehicleUpdate/{id}', [App\Http\Controllers\api\VehicleController::class, 'update']);
+
 
 
 

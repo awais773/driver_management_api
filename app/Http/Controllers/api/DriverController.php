@@ -16,6 +16,9 @@ class DriverController extends Controller
     public function index()
     {
         $data = Driver::get();
+         foreach ($data as $Driver) {
+            $Driver->vehicle_image = json_decode($Driver->vehicle_image); // Decode the JSON-encoded location string
+        }
         if (is_null($data)) {
             return response()->json('data not found',);
         }
@@ -59,16 +62,18 @@ class DriverController extends Controller
             $driver->company_document = $video_url;
         }
 
-        if ($file = $request->file('vehicle_image')) {
-            $video_name = md5(rand(1000, 10000));
-            $ext = strtolower($file->getClientOriginalExtension());
-            $video_full_name = $video_name . '.' . $ext;
-            $upload_path = 'vehicleImage/';
-            $video_url = $upload_path . $video_full_name;
-            $file->move($upload_path, $video_url);
-            $driver->vehicle_image = $video_url;
+        if ($files = $request->file('vehicle_image')) { // Assuming 'vehicle_images' is the input name for multiple files
+            $imageUrls = []; // Initialize an array to store the image URLs
+            foreach ($files as $file) {
+                $image_name = md5(rand(1000, 10000)) . '.' . $file->getClientOriginalExtension();
+                $upload_path = 'vehicleImage/';
+                $image_url = $upload_path . $image_name;
+                $file->move($upload_path, $image_name);
+                $imageUrls[] = $image_url; // Store the image URL in the array
+            }
+            $driver->vehicle_image = $imageUrls; // Store the array of image URLs in the driver object
         }
-
+        
 
         if ($file = $request->file('bank_upload_document')) {
             $video_name = md5(rand(1000, 10000));
@@ -92,6 +97,8 @@ class DriverController extends Controller
     public function show($id)
     {
         $program = Driver::find($id);
+        $program->vehicle_image = json_decode($program->vehicle_image); // Decode the JSON-encoded location string
+
         if (is_null($program)) {
             return response()->json('Data not found', 404);
         }
@@ -215,7 +222,6 @@ class DriverController extends Controller
                 $obj->total_number_hour = $request->input('total_number_hour');
             }
 
-
             ///  vehicle
 
             
@@ -271,14 +277,16 @@ class DriverController extends Controller
                 $obj->company_document = $video_url;
             }
 
-            if ($file = $request->file('vehicle_image')) {
-                $video_name = md5(rand(1000, 10000));
-                $ext = strtolower($file->getClientOriginalExtension());
-                $video_full_name = $video_name . '.' . $ext;
-                $upload_path = 'vehicleImage/';
-                $video_url = $upload_path . $video_full_name;
-                $file->move($upload_path, $video_url);
-                $obj->vehicle_image = $video_url;
+            if ($files = $request->file('vehicle_image')) { // Assuming 'vehicle_images' is the input name for multiple files
+                $imageUrls = []; // Initialize an array to store the image URLs
+                foreach ($files as $file) {
+                    $image_name = md5(rand(1000, 10000)) . '.' . $file->getClientOriginalExtension();
+                    $upload_path = 'vehicleImage/';
+                    $image_url = $upload_path . $image_name;
+                    $file->move($upload_path, $image_name);
+                    $imageUrls[] = $image_url; // Store the image URL in the array
+                }
+                $obj->vehicle_image = $imageUrls; // Update the array of image URLs in the object
             }
 
 
