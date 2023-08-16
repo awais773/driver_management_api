@@ -27,6 +27,23 @@ class VehicleController extends Controller
             'data' => $data,
         ]);
     }
+
+
+    public function B2BIndex()
+    {
+        $data = Vehicle::where('type','b2b')->get();
+        foreach ($data as $Driver) {
+            $Driver->image = json_decode($Driver->image); // Decode the JSON-encoded location string
+        }
+        if (is_null($data)) {
+            return response()->json('data not found',);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'All Data susccessfull',
+            'data' => $data,
+        ]);
+    }
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

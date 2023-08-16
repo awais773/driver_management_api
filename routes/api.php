@@ -59,6 +59,11 @@ Route::post('/driversUpdate/{id}', [App\Http\Controllers\api\DriverController::c
 Route::apiResource('vehicle', App\Http\Controllers\api\VehicleController::class);
 Route::post('/vehicleUpdate/{id}', [App\Http\Controllers\api\VehicleController::class, 'update']);
 
+         //B2b
+Route::get('/B2BIndex', [App\Http\Controllers\api\VehicleController::class, 'B2BIndex']);
+Route::get('/B2BgetDriver', [App\Http\Controllers\api\DriverController::class, 'B2BIndex']);
+
+
 
 
 
