@@ -18,6 +18,7 @@ public function up()
         $table->string('name')->nullable();
         $table->string('vehicle_company')->nullable();
         $table->string('description')->nullable();
+        $table->string('type')->nullable();
         $table->string('car_make')->nullable();
         $table->string('car_model')->nullable();
         $table->string('car_color')->nullable();
