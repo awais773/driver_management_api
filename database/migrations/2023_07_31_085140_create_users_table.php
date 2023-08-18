@@ -55,6 +55,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('selectedCarType')->nullable();
             $table->string('type')->nullable();
+            $table->string('joining_date')->nullable();
             $table->timestamps();
         });
     }

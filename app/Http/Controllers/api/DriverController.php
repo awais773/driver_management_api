@@ -261,6 +261,10 @@ class DriverController extends Controller
                 $obj->password = ($request->input('password'));
             }
 
+            if (!empty($request->input('joining_date'))) {
+                $obj->joining_date = ($request->input('joining_date'));
+            }
+
             if ($file = $request->file('profile_picture')) {
                 $video_name = md5(rand(1000, 10000));
                 $ext = strtolower($file->getClientOriginalExtension());
