@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('drivers', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
             $table->string('email')->nullable();
@@ -51,10 +51,12 @@ return new class extends Migration
             $table->string('car_number')->nullable();
             $table->string('vehicle_image')->nullable();
             $table->string('total_number_hour')->nullable();
+            $table->string('password')->nullable();
+            $table->string('selectedCarType')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *
@@ -62,7 +64,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('drivers');
+        Schema::dropIfExists('users');
     }
 };
 

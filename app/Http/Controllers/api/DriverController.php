@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Models\Driver;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -15,7 +15,7 @@ class DriverController extends Controller
 
     public function index()
     {
-        $data = Driver::get();
+        $data = User::where('type','driver')->get();
          foreach ($data as $Driver) {
             $Driver->vehicle_image = json_decode($Driver->vehicle_image); // Decode the JSON-encoded location string
         }
@@ -31,7 +31,7 @@ class DriverController extends Controller
 
     public function B2BIndex()
     {
-        $data = Driver::where('type','b2b')->get();
+        $data = User::where('type','b2b')->get();
          foreach ($data as $Driver) {
             $Driver->vehicle_image = json_decode($Driver->vehicle_image); // Decode the JSON-encoded location string
         }
@@ -58,7 +58,8 @@ class DriverController extends Controller
 
             ], 400);
         } {
-       $driver = Driver::create($request->post());
+       $driver = User::create($request->post());
+       $driver['password'] = ($request->input('password')); // Hash the password
       if ($file = $request->file('profile_picture')) {
             $video_name = md5(rand(1000, 10000));
             $ext = strtolower($file->getClientOriginalExtension());
@@ -112,7 +113,7 @@ class DriverController extends Controller
 
     public function show($id)
     {
-        $program = Driver::find($id);
+        $program = User::find($id);
         $program->vehicle_image = json_decode($program->vehicle_image); // Decode the JSON-encoded location string
 
         if (is_null($program)) {
@@ -123,32 +124,10 @@ class DriverController extends Controller
             'data' => $program,
         ]);
     }
-    // public function update(Request $request, $id)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         // 'name' => 'required|string|max:255',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json($validator->errors());
-    //     }
-    //     $program = Driver::find($id);
-    //     $program->name = $request->name;
-    //     $program->email = $request->email;
-    //     $program->role_id = $request->role_id;
-    //     // $program->block = $request->block;
-    //     $program->password = Hash::make($request->password);
-    //     $program->update();
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'User updated successfully.',
-    //         'data' => $program,
-    //     ], 200);
-    // }
     public function update(Request $request, $id)
     {
 
-        $obj = Driver::find($id);
+        $obj = User::find($id);
          if ($obj) {
             if (!empty($request->input('name'))) {
                 $obj->name = $request->input('name');
@@ -278,6 +257,10 @@ class DriverController extends Controller
                 $obj->selectedCarType = $request->input('selectedCarType');
             }
 
+            if (!empty($request->input('password'))) {
+                $obj->password = ($request->input('password'));
+            }
+
             if ($file = $request->file('profile_picture')) {
                 $video_name = md5(rand(1000, 10000));
                 $ext = strtolower($file->getClientOriginalExtension());
@@ -333,7 +316,7 @@ class DriverController extends Controller
 
     public function destroy($id)
     {
-        $program = Driver::find($id);
+        $program = User::find($id);
         if (!empty($program)) {
             $program->delete();
             return response()->json([
