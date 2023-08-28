@@ -122,14 +122,13 @@ class VehicleController extends Controller
             }
             if (!empty($request->input('model_year'))) {
                 $obj->model_year = $request->input('model_year');
-            }
+            }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
             if (!empty($request->input('registration_number'))) {
                 $obj->registration_number = $request->input('registration_number');
             }
             if (!empty($request->input('equipment'))) {
                 $obj->equipment = $request->input('equipment');
             }
-
             if (!empty($request->input('vehicle_type'))) {
                 $obj->vehicle_type = $request->input('vehicle_type');
             }

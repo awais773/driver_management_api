@@ -91,7 +91,6 @@ class DriverController extends Controller
             $driver->vehicle_image = $imageUrls; // Store the array of image URLs in the driver object
         }
         
-
         if ($file = $request->file('bank_upload_document')) {
             $video_name = md5(rand(1000, 10000));
             $ext = strtolower($file->getClientOriginalExtension());
@@ -132,11 +131,14 @@ class DriverController extends Controller
             if (!empty($request->input('name'))) {
                 $obj->name = $request->input('name');
             }
+               if (!empty($request->input('last_name'))) {
+                $obj->last_name = $request->input('last_name');
+            }
             if (!empty($request->input('email'))) {
                 $obj->email = $request->input('email');
             }
-            if (!empty($request->input('ssn'))) {
-                $obj->ssn = $request->input('ssn');
+            if (!empty($request->input('security_code'))) {
+                $obj->security_code = $request->input('security_code');
             }
             if (!empty($request->input('mobile'))) {
                 $obj->mobile = $request->input('mobile');
@@ -144,11 +146,11 @@ class DriverController extends Controller
             if (!empty($request->input('gender'))) {
                 $obj->gender = $request->input('gender');
             }
-            if (!empty($request->input('emergency_name'))) {
-                $obj->emergency_name = $request->input('emergency_name');
+            if (!empty($request->input('emergency_contact_name'))) {
+                $obj->emergency_contact_name = $request->input('emergency_contact_name');
             }
-            if (!empty($request->input('emergency_number'))) {
-                $obj->emergency_number = $request->input('emergency_number');
+            if (!empty($request->input('emergency_contact_number'))) {
+                $obj->emergency_contact_number = $request->input('emergency_contact_number');
             }
             if (!empty($request->input('address'))) {
                 $obj->address = $request->input('address');
@@ -263,6 +265,13 @@ class DriverController extends Controller
 
             if (!empty($request->input('joining_date'))) {
                 $obj->joining_date = ($request->input('joining_date'));
+            }
+
+            if (!empty($request->input('salary_commission_exclusive'))) {
+                $obj->salary_commission_exclusive = ($request->input('salary_commission_exclusive'));
+            }
+            if (!empty($request->input('card'))) {
+                $obj->card = ($request->input('card'));
             }
 
             if ($file = $request->file('profile_picture')) {

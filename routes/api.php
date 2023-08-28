@@ -66,6 +66,7 @@ Route::get('/B2BgetDriver', [App\Http\Controllers\api\DriverController::class, '
         //  Expense
 Route::apiResource('expense', App\Http\Controllers\api\ExpenseController::class);
 Route::post('/expenseUpdate/{id}', [App\Http\Controllers\api\ExpenseController::class, 'update']);
+Route::get('/detailsExpensive/{id}', [App\Http\Controllers\api\ExpenseController::class, 'detailsExpensive']);
 
 
 

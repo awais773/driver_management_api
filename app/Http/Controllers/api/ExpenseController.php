@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\api;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\Expense;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -15,19 +16,24 @@ class ExpenseController extends Controller
 
     public function index()
     {
-        $data = Expense::with('driver')->get();
-        //  foreach ($data as $Expense) {
-        //     $Expense->vehicle_image = json_decode($Expense->vehicle_image); // Decode the JSON-encoded location string
-        // }
-        if (is_null($data)) {
-            return response()->json('data not found',);
+        $data = Expense::with('driver')->select('user_id',
+            DB::raw('SUM(CASE WHEN card = "Payable" THEN amount ELSE 0 END) as total_payable'),
+            DB::raw('SUM(CASE WHEN card = "Receiveable" THEN amount ELSE 0 END) as total_receivable'),
+            DB::raw('SUM(CASE WHEN status = "Pending" THEN 1 ELSE 0 END) as total_pending'))
+            ->groupBy('user_id')
+            ->get();
+    
+        if ($data->isEmpty()) {
+            return response()->json('data not found');
         }
+    
         return response()->json([
             'success' => true,
-            'message' => 'All Data susccessfull',
+            'message' => 'Data retrieved successfully',
             'data' => $data,
         ]);
     }
+
 
     public function B2BIndex()
     {
@@ -148,5 +154,46 @@ class ExpenseController extends Controller
             ]);
         }
     }
+
+
+
+    public function detailsExpensive($id)
+    {
+        $data = Expense::with('driver')->where('user_id',$id)->get();
+        if (is_null($data)) {
+            return response()->json('data not found',);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'All Data susccessfull',
+            'data' => $data,
+        ]);
+    }
+
+
+
+//     public function indexDriver()
+// {
+//     $data = Expense::with('driver')
+//         ->whereIn('id', function ($query) {
+//             $query->selectRaw('MAX(id)')
+//                 ->from('expenses')
+//                 ->groupBy('driver_id');
+//         })
+//         ->get();
+
+//     if ($data->isEmpty()) {
+//         return response()->json('data not found');
+//     }
+
+//     return response()->json([
+//         'success' => true,
+//         'message' => 'All Data successful',
+//         'data' => $data,
+//     ]);
+// }
+
+    
+    
 
 }
