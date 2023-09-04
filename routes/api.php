@@ -69,6 +69,15 @@ Route::post('/expenseUpdate/{id}', [App\Http\Controllers\api\ExpenseController::
 Route::get('/detailsExpensive/{id}', [App\Http\Controllers\api\ExpenseController::class, 'detailsExpensive']);
 
 
+Route::post('/processCSV', [App\Http\Controllers\api\ExpenseController::class, 'processCSV']);
+
+
+       //  Service
+Route::apiResource('service', App\Http\Controllers\api\ServiceController::class);
+Route::post('/serviceUpdate/{id}', [App\Http\Controllers\api\ServiceController::class, 'update']);
+
+
+
 
 
 Route::middleware('auth:api')->group(function () {

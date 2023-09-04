@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('expenses', function (Blueprint $table) {
+        Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->string('amount')->nullable();
-            $table->string('category')->nullable();
+            $table->string('service_meter_reading')->nullable();
             $table->string('image')->nullable();
-            $table->string('status')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('card')->nullable();
+            $table->unsignedBigInteger('vehicle_id')->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('expenses');
+        Schema::dropIfExists('services');
     }
 };

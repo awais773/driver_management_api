@@ -117,6 +117,12 @@ class ExpenseController extends Controller
             if (!empty($request->input('card'))) {
                 $obj->card = $request->input('card');
             }
+            if (!empty($request->input('meter_reading'))) {
+                $obj->meter_reading = $request->input('meter_reading');
+            }
+            if (!empty($request->input('total_life_kilometer'))) {
+                $obj->total_life_kilometer = $request->input('total_life_kilometer');
+            }
            
             if ($file = $request->file('image')) {
                 $video_name = md5(rand(1000, 10000));
@@ -193,6 +199,34 @@ class ExpenseController extends Controller
 //     ]);
 // }
 
+
+public function processCSV(Request $request)
+{
+    $request->validate([
+        'csv_file' => 'required|mimes:csv,txt',
+    ]);
+
+    $csvFilePath = $request->file('csv_file')->getPathName();
+    // Assuming the CSV columns are: username, last_name, and any other relevant fields
+    $csvData = array_map('str_getcsv', file($csvFilePath));
+
+    foreach ($csvData as $data) {
+        $username = $data[0];
+        $last_name = $data[1];
+        $amount = $data[2]; // Assuming the amount is in the third column
+        // Extract other fields from $data array
+
+        // Find and update the user
+        DB::table('users')
+            ->where('name', $username)
+            ->where('last_name', $last_name)
+            ->update([
+                'salary' => $amount,
+            ]);
+    }
+
+    return response()->json(['message' => 'User records updated successfully']);
+}
     
     
 
