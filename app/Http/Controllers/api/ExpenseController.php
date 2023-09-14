@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Models\Expense;
+use App\Models\ImportFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -200,6 +201,48 @@ class ExpenseController extends Controller
 // }
 
 
+// public function processCSV(Request $request)
+// {
+//     $request->validate([
+//         'csv_file' => 'required|mimes:csv,txt',
+//     ]);
+
+//     $csvFilePath = $request->file('csv_file')->getPathName();
+//     // Assuming the CSV columns are: username, last_name, and any other relevant fields
+//     $csvData = array_map('str_getcsv', file($csvFilePath));
+
+//     foreach ($csvData as $data) {
+//         $username = $data[0];
+//         $last_name = $data[1];
+//         $amount = $data[2]; // Assuming the amount is in the third column
+//         // Extract other fields from $data array
+
+//         // Find and update the user
+//            DB::table('users')
+//             ->where('name', $username)
+//             ->where('last_name', $last_name)
+//             // i want the amount to be added to the existing amount
+//             ->update([
+//                 'uber_earning' => $amount,
+//             ]);
+//     }
+//     $driver = new ImportFile(); 
+//     if ($file = $request->file('csv_file')) {
+//         $video_name = md5(rand(1000, 10000));
+//         $ext = strtolower($file->getClientOriginalExtension());
+//         $video_full_name = $video_name . '.' . $ext;
+//         $upload_path = 'ImportFile/';
+//         $video_url = $upload_path . $video_full_name;
+//         $file->move($upload_path, $video_url);
+//         $driver->file = $video_url;
+//     }
+//     $driver->save();
+
+//     return response()->json(['message' => 'User records updated successfully']);
+// }
+
+
+
 public function processCSV(Request $request)
 {
     $request->validate([
@@ -216,18 +259,75 @@ public function processCSV(Request $request)
         $amount = $data[2]; // Assuming the amount is in the third column
         // Extract other fields from $data array
 
-        // Find and update the user
-        DB::table('users')
+        // Retrieve the current 'uber_earning' value for the user
+        $user = DB::table('users')
             ->where('name', $username)
             ->where('last_name', $last_name)
-            ->update([
-                'salary' => $amount,
-            ]);
+            ->first();
+
+        if ($user) {
+            $currentUberEarning = $user->uber_earning;
+
+            // Calculate the new 'uber_earning' value by adding the new amount
+            $newUberEarning = $currentUberEarning + $amount;
+
+            // Update the user's 'uber_earning' with the new value
+            DB::table('users')
+                ->where('name', $username)
+                ->where('last_name', $last_name)
+                ->update([
+                    'uber_earning' => $newUberEarning,
+                ]);
+        }
     }
+
+    $driver = new ImportFile(); 
+    if ($file = $request->file('csv_file')) {
+        $video_name = md5(rand(1000, 10000));
+        $ext = strtolower($file->getClientOriginalExtension());
+        $video_full_name = $video_name . '.' . $ext;
+        $upload_path = 'ImportFile/';
+        $video_url = $upload_path . $video_full_name;
+        $file->move($upload_path, $video_url);
+        $driver->file = $video_url;
+    }
+    $driver->save();
 
     return response()->json(['message' => 'User records updated successfully']);
 }
+
+
+
+public function fileGet()
+{
+    $data = ImportFile::get();
+    if (is_null($data)) {
+        return response()->json('data not found',);
+    }
+    return response()->json([
+        'success' => true,
+        'message' => 'All Data susccessfull',
+        'data' => $data,
+    ]);
+}
     
-    
+
+
+public function fileDelete($id)
+{
+    $program = ImportFile::find($id);
+    if (!empty($program)) {
+        $program->delete();
+        return response()->json([
+            'success' => true,
+            'message' => ' delete successfuly',
+        ], 200);
+    } else {
+        return response()->json([
+            'success' => false,
+            'message' => 'something wrong try again ',
+        ]);
+    }
+}
 
 }

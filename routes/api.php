@@ -67,9 +67,11 @@ Route::get('/B2BgetDriver', [App\Http\Controllers\api\DriverController::class, '
 Route::apiResource('expense', App\Http\Controllers\api\ExpenseController::class);
 Route::post('/expenseUpdate/{id}', [App\Http\Controllers\api\ExpenseController::class, 'update']);
 Route::get('/detailsExpensive/{id}', [App\Http\Controllers\api\ExpenseController::class, 'detailsExpensive']);
-
-
 Route::post('/processCSV', [App\Http\Controllers\api\ExpenseController::class, 'processCSV']);
+Route::get('/fileGet', [App\Http\Controllers\api\ExpenseController::class, 'fileGet']);
+Route::delete('/fileDelete/{id}', [App\Http\Controllers\api\ExpenseController::class, 'fileDelete']);
+
+        //  Income
 
 
        //  Service
