@@ -33,6 +33,7 @@ Route::get('/student',[App\Http\Controllers\api\AuthController::class,'student']
 
 Route::post('register',[App\Http\Controllers\api\AuthController::class,'register']);
 Route::post('login',[App\Http\Controllers\api\AuthController::class,'login']);
+Route::post('signIn',[App\Http\Controllers\api\AuthController::class,'Applogin']);
 Route::post('newlogin',[App\Http\Controllers\api\AuthController::class,'newlogin']);
 Route::post('/forgotPassword', [App\Http\Controllers\api\AuthController::class, 'forgotPassword']);
 Route::post('/updatePassword', [App\Http\Controllers\api\AuthController::class, 'updatePassword']);

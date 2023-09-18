@@ -6,6 +6,7 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Vehicle;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -40,6 +41,27 @@ class ServiceController extends Controller
             $Service->image = $video_url;
         }
       $Service->save();
+
+      /// Vehicle update
+      $obj = Vehicle::find($request->vehicle_id);
+      if ($obj) {
+         if (!empty($request->input('service_meter_reading'))) {
+             $obj->service_meter_reading = $request->input('service_meter_reading');
+         }
+        
+         if ($file = $request->file('image')) {
+             $video_name = md5(rand(1000, 10000));
+             $ext = strtolower($file->getClientOriginalExtension());
+             $video_full_name = $video_name . '.' . $ext;
+             $upload_path = 'serviceImage/';
+             $video_url = $upload_path . $video_full_name;
+             $file->move($upload_path, $video_url);
+             $obj->image = $video_url;
+         }
+          $obj->save();
+
+     }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Service Create successfull',
@@ -72,7 +94,9 @@ class ServiceController extends Controller
             if (!empty($request->input('service_meter_reading'))) {
                 $obj->service_meter_reading = $request->input('service_meter_reading');
             }
-           
+            if (!empty($request->input('category'))) {
+                $obj->category = $request->input('category');
+            }
             if ($file = $request->file('image')) {
                 $video_name = md5(rand(1000, 10000));
                 $ext = strtolower($file->getClientOriginalExtension());

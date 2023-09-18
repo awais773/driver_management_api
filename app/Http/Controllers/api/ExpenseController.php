@@ -243,41 +243,112 @@ class ExpenseController extends Controller
 
 
 
+// public function processCSV(Request $request)
+// {
+//     $request->validate([
+//         'csv_file' => 'required|mimes:csv,txt',
+//     ]);
+
+//     $csvFilePath = $request->file('csv_file')->getPathName();
+//     // Assuming the CSV columns are: username, last_name, and any other relevant fields
+//     $csvData = array_map('str_getcsv', file($csvFilePath));
+
+//     foreach ($csvData as $data) {
+//         $username = $data[0];
+//         $last_name = $data[1];
+//         $amount = $data[2]; // Assuming the amount is in the third column
+//         // Extract other fields from $data array
+
+//         // Retrieve the current 'uber_earning' value for the user
+//         $user = DB::table('users')
+//             ->where('name', $username)
+//             ->where('last_name', $last_name)
+//             ->first();
+
+//         if ($user) {
+//             $currentUberEarning = $user->uber_earning;
+//             // Calculate the new 'uber_earning' value by adding the new amount
+//             $newUberEarning = $currentUberEarning + $amount;
+
+//             // Update the user's 'uber_earning' with the new value
+//             DB::table('users')
+//                 ->where('name', $username)
+//                 ->where('last_name', $last_name)
+//                 ->update([
+//                     'uber_earning' => $newUberEarning,
+//                 ]);
+//         }
+//     }
+
+//     $driver = new ImportFile(); 
+//     if ($file = $request->file('csv_file')) {
+//         $video_name = md5(rand(1000, 10000));
+//         $ext = strtolower($file->getClientOriginalExtension());
+//         $video_full_name = $video_name . '.' . $ext;
+//         $upload_path = 'ImportFile/';
+//         $video_url = $upload_path . $video_full_name;
+//         $file->move($upload_path, $video_url);
+//         $driver->file = $video_url;
+//     }
+//     $driver->save();
+
+//     return response()->json(['message' => 'User records updated successfully']);
+// }
 public function processCSV(Request $request)
 {
     $request->validate([
         'csv_file' => 'required|mimes:csv,txt',
+        'type' => 'required|in:b2b,driver', // Add validation for the "type" parameter
     ]);
 
+    $type = $request->input('type'); // Get the "type" from the request
+
     $csvFilePath = $request->file('csv_file')->getPathName();
-    // Assuming the CSV columns are: username, last_name, and any other relevant fields
+    // Assuming the CSV columns are: username, last_name, amount, and any other relevant fields
     $csvData = array_map('str_getcsv', file($csvFilePath));
 
     foreach ($csvData as $data) {
         $username = $data[0];
         $last_name = $data[1];
         $amount = $data[2]; // Assuming the amount is in the third column
+
         // Extract other fields from $data array
 
-        // Retrieve the current 'uber_earning' value for the user
+        // Retrieve the user based on their username and last_name
         $user = DB::table('users')
             ->where('name', $username)
             ->where('last_name', $last_name)
+            ->where('type', $type)
             ->first();
 
         if ($user) {
-            $currentUberEarning = $user->uber_earning;
+            // Depending on the "type" from the request, update the corresponding field
+            if ($type === 'bolt') {
+                $currentB2BEarning = $user->uber_earning;
+                // Calculate the new 'b2b_earning' value by adding the new amount
+                $newB2BEarning = $currentB2BEarning + $amount;
 
-            // Calculate the new 'uber_earning' value by adding the new amount
-            $newUberEarning = $currentUberEarning + $amount;
+                // Update the user's 'b2b_earning' with the new value
+                DB::table('users')
+                    ->where('name', $username)
+                    ->where('last_name', $last_name)
+                    ->update([
+                        'uber_earning' => $newB2BEarning,
+                    ]);
+            } elseif ($type === 'uber') {
+                $currentDriverEarning = $user->uber_earning;
+                // Calculate the new 'driver_earning' value by adding the new amount
+                $newDriverEarning = $currentDriverEarning + $amount;
 
-            // Update the user's 'uber_earning' with the new value
-            DB::table('users')
-                ->where('name', $username)
-                ->where('last_name', $last_name)
-                ->update([
-                    'uber_earning' => $newUberEarning,
-                ]);
+                // Update the user's 'driver_earning' with the new value
+                DB::table('users')
+                    ->where('name', $username)
+                    ->where('last_name', $last_name)
+                    ->update([
+                        'uber_earning' => $newDriverEarning,
+                    ]);
+            }
+            // Add more conditions for other "type" values if needed
         }
     }
 
@@ -295,6 +366,7 @@ public function processCSV(Request $request)
 
     return response()->json(['message' => 'User records updated successfully']);
 }
+
 
 
 

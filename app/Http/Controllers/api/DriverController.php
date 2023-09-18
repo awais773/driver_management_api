@@ -15,20 +15,25 @@ class DriverController extends Controller
 
     public function index()
     {
-        $data = User::where('type','driver')->get();
-         foreach ($data as $Driver) {
+        $data = User::where('type', 'bolt')
+                    ->orWhere('type', 'uber')
+                    ->get();
+    
+        foreach ($data as $Driver) {
             $Driver->vehicle_image = json_decode($Driver->vehicle_image); // Decode the JSON-encoded location string
         }
-        if (is_null($data)) {
-            return response()->json('data not found',);
+    
+        if ($data->isEmpty()) {
+            return response()->json(['message' => 'Data not found'], 404);
         }
+    
         return response()->json([
             'success' => true,
-            'message' => 'All Data susccessfull',
+            'message' => 'All Data successfully retrieved',
             'data' => $data,
         ]);
     }
-
+    
     public function B2BIndex()
     {
         $data = User::where('type','b2b')->get();
@@ -59,7 +64,7 @@ class DriverController extends Controller
             ], 400);
         } {
        $driver = User::create($request->post());
-       $driver['password'] = ($request->input('password')); // Hash the password
+       $driver['password'] =  Hash::make($request->input('password')); // Hash the password
       if ($file = $request->file('profile_picture')) {
             $video_name = md5(rand(1000, 10000));
             $ext = strtolower($file->getClientOriginalExtension());

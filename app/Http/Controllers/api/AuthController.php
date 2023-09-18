@@ -63,7 +63,31 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => $request->password,
         ];
+        if (auth()->attempt($data)) {
+            $token = auth()->user()->createToken('Token')->accessToken;
+            return response()->json([
+                'success' => true,
+                'message' => 'login successfull',
+                'user' => User::find(Auth::id()),
+                'token' => $token,
+            ], 200);
+        }
+        else {
+            return response()->json([
+                'success' => false,
+                'error' => 'Unauthorized',
+                'message' => 'Please Check your Credentials'
+            ], 401);
+        }
+    }
 
+
+    public function Applogin(Request $request)
+    {
+        $data = [
+            'email' => $request->email,
+            'password' => $request->password,
+        ];
         if (auth()->attempt($data)) {
             $token = auth()->user()->createToken('Token')->accessToken;
             return response()->json([
