@@ -71,8 +71,17 @@ Route::get('/detailsExpensive/{id}', [App\Http\Controllers\api\ExpenseController
 Route::post('/processCSV', [App\Http\Controllers\api\ExpenseController::class, 'processCSV']);
 Route::get('/fileGet', [App\Http\Controllers\api\ExpenseController::class, 'fileGet']);
 Route::delete('/fileDelete/{id}', [App\Http\Controllers\api\ExpenseController::class, 'fileDelete']);
+Route::get('/uberdata', [App\Http\Controllers\api\ExpenseController::class, 'uberdata']);
+Route::get('/boltdata', [App\Http\Controllers\api\ExpenseController::class, 'boltdata']);
+Route::get('/paymentShow/{id}', [App\Http\Controllers\api\ExpenseController::class, 'paymentShow']);
+Route::get('/VehicleExpense/{id}', [App\Http\Controllers\api\ExpenseController::class, 'VehicleExpense']);
+Route::post('/reportAdd', [App\Http\Controllers\api\ExpenseController::class, 'reportAdd']);
 
-        //  Income
+
+        //  invoice
+Route::apiResource('invoice', App\Http\Controllers\api\InvoiceController::class);
+Route::post('/invoiceUpdate/{id}', [App\Http\Controllers\api\InvoiceController::class, 'update']);
+Route::get('/reportshow/{id}', [App\Http\Controllers\api\InvoiceController::class, 'reportshow']);
 
 
        //  Service

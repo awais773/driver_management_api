@@ -31,7 +31,7 @@ class VehicleController extends Controller
 
     public function B2BIndex()
     {
-        $data = Vehicle::where('type','b2b')->get();
+        $data = Vehicle::where('type', 'b2b')->get();
         foreach ($data as $Driver) {
             $Driver->image = json_decode($Driver->image); // Decode the JSON-encoded location string
         }
@@ -58,20 +58,28 @@ class VehicleController extends Controller
 
             ], 400);
         } {
-       $vehicles = Vehicle::create($request->post());
-       if ($files = $request->file('image')) { // Assuming 'vehicle_images' is the input name for multiple files
-        $imageUrls = []; // Initialize an array to store the image URLs
-        foreach ($files as $file) {
-            $image_name = md5(rand(1000, 10000)) . '.' . $file->getClientOriginalExtension();
-            $upload_path = 'vehicleImage/';
-            $image_url = $upload_path . $image_name;
-            $file->move($upload_path, $image_name);
-            $imageUrls[] = $image_url; // Store the image URL in the array
-        }
-        $vehicles->image = $imageUrls; // Store the array of image URLs in the driver object
-    }
-    
-      $vehicles->save();
+            $vehicles = Vehicle::create($request->post());
+            if ($files = $request->file('image')) { // Assuming 'vehicle_images' is the input name for multiple files
+                $imageUrls = []; // Initialize an array to store the image URLs
+                foreach ($files as $file) {
+                    $image_name = md5(rand(1000, 10000)) . '.' . $file->getClientOriginalExtension();
+                    $upload_path = 'vehicleImage/';
+                    $image_url = $upload_path . $image_name;
+                    $file->move($upload_path, $image_name);
+                    $imageUrls[] = $image_url; // Store the image URL in the array
+                }
+                $vehicles->image = $imageUrls; // Store the array of image URLs in the driver object
+            }
+            if ($file = $request->file('company_document')) {
+                $video_name = md5(rand(1000, 10000));
+                $ext = strtolower($file->getClientOriginalExtension());
+                $video_full_name = $video_name . '.' . $ext;
+                $upload_path = 'vehicleCompanyImage/';
+                $video_url = $upload_path . $video_full_name;
+                $file->move($upload_path, $video_url);
+                $vehicles->company_document = $video_url;
+            }
+            $vehicles->save();
             return response()->json([
                 'success' => true,
                 'message' => 'vehicle Create successfull',
@@ -92,13 +100,13 @@ class VehicleController extends Controller
             'data' => $program,
         ]);
     }
-  
 
-      public function update(Request $request, $id)
+
+    public function update(Request $request, $id)
     {
 
         $obj = Vehicle::find($id);
-         if ($obj) {
+        if ($obj) {
             if (!empty($request->input('name'))) {
                 $obj->name = $request->input('name');
             }
@@ -122,7 +130,7 @@ class VehicleController extends Controller
             }
             if (!empty($request->input('model_year'))) {
                 $obj->model_year = $request->input('model_year');
-            }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+            }
             if (!empty($request->input('registration_number'))) {
                 $obj->registration_number = $request->input('registration_number');
             }
@@ -187,8 +195,7 @@ class VehicleController extends Controller
                 }
                 $obj->image = $imageUrls; // Update the array of image URLs in the object
             }
-             $obj->save();
-
+            $obj->save();
         }
         return response()->json([
             'success' => true,
@@ -213,5 +220,4 @@ class VehicleController extends Controller
             ]);
         }
     }
-
 }
