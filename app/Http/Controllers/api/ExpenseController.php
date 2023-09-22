@@ -77,9 +77,13 @@ class ExpenseController extends Controller
             'total_payable' => $request->total_payable,
             'total_receivable' => $request->total_receivable,
             'remaining_reciveable' => $request->remaining_reciveable,
+            'tax' => $request->tax,
+            'total_inclusive_tex' => $request->total_inclusive_tex,
+
         ]);  
-        $Expense->save();  
-          $obj = Expense::find($request->user_id);
+        $Expense->save();    
+  
+    $obj = Expense::find($request->user_id);
       if ($obj) {
          if (!empty($request->input('remaining_reciveable'))) {
              $obj->remaining_reciveable = $request->input('remaining_reciveable');
