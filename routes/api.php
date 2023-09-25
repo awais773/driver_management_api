@@ -55,10 +55,12 @@ Route::apiResource('contacts', App\Http\Controllers\api\ContactController::class
     //    Driver
 Route::apiResource('drivers', App\Http\Controllers\api\DriverController::class);
 Route::post('/driversUpdate/{id}', [App\Http\Controllers\api\DriverController::class, 'update']);
+Route::get('/ApproedDriver', [App\Http\Controllers\api\DriverController::class, 'ApproedDriver']);
 
         //  Vehicle
 Route::apiResource('vehicle', App\Http\Controllers\api\VehicleController::class);
 Route::post('/vehicleUpdate/{id}', [App\Http\Controllers\api\VehicleController::class, 'update']);
+Route::get('/notAssign', [App\Http\Controllers\api\VehicleController::class, 'notAssign']);
 
          //B2b
 Route::get('/B2BIndex', [App\Http\Controllers\api\VehicleController::class, 'B2BIndex']);

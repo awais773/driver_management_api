@@ -26,8 +26,8 @@ class ExpenseController extends Controller
     {
         $data = Expense::with('driver')->select(
             'user_id',
-            DB::raw('SUM(CASE WHEN card = "Payable" THEN amount ELSE 0 END) as total_payable'),
-            DB::raw('SUM(CASE WHEN card = "Receivable" THEN amount ELSE 0 END) as total_receivable'),
+            DB::raw('SUM(CASE WHEN card = "Payable" AND status = "Approved" THEN amount ELSE 0 END) as total_payable'),
+            DB::raw('SUM(CASE WHEN card = "Receivable" AND status = "Approved" THEN amount ELSE 0 END) as total_receivable'),
             DB::raw('SUM(CASE WHEN status = "Pending" THEN 1 ELSE 0 END) as total_pending')
         )
             ->groupBy('user_id')
@@ -48,8 +48,8 @@ class ExpenseController extends Controller
     {
         $data = Expense::with('driver')->select(
             'user_id', 
-            DB::raw('SUM(CASE WHEN card = "Payable" THEN amount ELSE 0 END) as total_payable'),
-            DB::raw('SUM(CASE WHEN card = "Receivable" THEN amount ELSE 0 END) as total_receivable'),
+            DB::raw('SUM(CASE WHEN card = "Payable" AND status = "Approved" THEN amount ELSE 0 END) as total_payable'),
+            DB::raw('SUM(CASE WHEN card = "Receivable" AND status = "Approved" THEN amount ELSE 0 END) as total_receivable'),
             DB::raw('SUM(CASE WHEN status = "Pending" THEN 1 ELSE 0 END) as total_pending')
         )
             ->where('user_id', $id) // Filter by the provided $id

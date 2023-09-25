@@ -33,6 +33,30 @@ class DriverController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function ApproedDriver()
+    {
+        $data = User::where(function ($query) {
+            $query->where('type', 'bolt')
+                ->orWhere('type', 'uber');
+        })
+        ->where('status', 'Approved')
+        ->get();
+    
+        foreach ($data as $Driver) {
+            $Driver->vehicle_image = json_decode($Driver->vehicle_image); // Decode the JSON-encoded location string
+        }
+    
+        if ($data->isEmpty()) {
+            return response()->json(['message' => 'Data not found'], 404);
+        }
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'All Data successfully retrieved',
+            'data' => $data,
+        ]);
+    }
     
     public function B2BIndex()
     {

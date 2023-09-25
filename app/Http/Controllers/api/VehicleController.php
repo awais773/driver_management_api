@@ -14,7 +14,7 @@ class VehicleController extends Controller
 
     public function index()
     {
-        $data = Vehicle::get();
+        $data = Vehicle::with('driver:id,vehicle_id,name,last_name')->get();
         foreach ($data as $Driver) {
             $Driver->image = json_decode($Driver->image); // Decode the JSON-encoded location string
         }
@@ -27,6 +27,26 @@ class VehicleController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function notAssign()
+    {
+        $data = Vehicle::with('driver:id,vehicle_id,name,last_name')
+            ->whereDoesntHave('driver', function ($query) {
+                $query->whereNotNull('vehicle_id');
+            })
+            ->get();
+
+        if ($data->isEmpty()) {
+            return response()->json('No unassigned vehicles found.');
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'All Data successfully',
+            'data' => $data,
+        ]);
+    }
+
 
 
     public function B2BIndex()
