@@ -12,29 +12,28 @@ use Illuminate\Support\Facades\Validator;
 class DriverController extends Controller
 {
 
+public function index()
+{
+    $data = User::where('type', 'bolt')
+                ->orWhere('type', 'uber')
+                ->get();
 
-    public function index()
-    {
-        $data = User::where('type', 'bolt')
-                    ->orWhere('type', 'uber')
-                    ->get();
-    
-        foreach ($data as $Driver) {
-            $Driver->vehicle_image = json_decode($Driver->vehicle_image); // Decode the JSON-encoded location string
-        }
-    
-        if ($data->isEmpty()) {
-            return response()->json(['message' => 'Data not found'], 404);
-        }
-    
-        return response()->json([
-            'success' => true,
-            'message' => 'All Data successfully retrieved',
-            'data' => $data,
-        ]);
+    foreach ($data as $Driver) {
+        $Driver->vehicle_image = json_decode($Driver->vehicle_image); // Decode the JSON-encoded location string
     }
 
-    public function ApproedDriver()
+    if ($data->isEmpty()) {
+        return response()->json(['message' => 'Data not found'], 404);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'All Data successfully retrieved',
+        'data' => $data,
+    ]);
+}
+
+      public function ApproedDriver()
     {
         $data = User::where(function ($query) {
             $query->where('type', 'bolt')
@@ -57,10 +56,11 @@ class DriverController extends Controller
             'data' => $data,
         ]);
     }
-    
+
+
     public function B2BIndex()
     {
-        $data = User::where('type','b2b')->get();
+        $data = User::with('company')->where('type','b2b')->get();
          foreach ($data as $Driver) {
             $Driver->vehicle_image = json_decode($Driver->vehicle_image); // Decode the JSON-encoded location string
         }
@@ -71,6 +71,19 @@ class DriverController extends Controller
             'success' => true,
             'message' => 'All Data susccessfull',
             'data' => $data,
+        ]);
+    }
+    public function B2Bshow($id)
+    {
+        $program = User::with('company')->where( 'id' ,$id)->first();
+        $program->vehicle_image = json_decode($program->vehicle_image); // Decode the JSON-encoded location string
+
+        if (is_null($program)) {
+            return response()->json('Data not found', 404);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $program,
         ]);
     }
     public function store(Request $request)
@@ -97,15 +110,6 @@ class DriverController extends Controller
             $video_url = $upload_path . $video_full_name;
             $file->move($upload_path, $video_url);
             $driver->profile_picture = $video_url;
-        }
-        if ($file = $request->file('company_document')) {
-            $video_name = md5(rand(1000, 10000));
-            $ext = strtolower($file->getClientOriginalExtension());
-            $video_full_name = $video_name . '.' . $ext;
-            $upload_path = 'companyDocument/';
-            $video_url = $upload_path . $video_full_name;
-            $file->move($upload_path, $video_url);
-            $driver->company_document = $video_url;
         }
 
         if ($files = $request->file('vehicle_image')) { // Assuming 'vehicle_images' is the input name for multiple files
@@ -223,19 +227,6 @@ class DriverController extends Controller
             if (!empty($request->input('bank_emergency_contact_name'))) {
                 $obj->bank_emergency_contact_name = $request->input('bank_emergency_contact_name');
             }
-            if (!empty($request->input('company_name'))) {
-                $obj->company_name = $request->input('company_name');
-            }
-             if (!empty($request->input('owner_name'))) {
-                $obj->owner_name = $request->input('owner_name');
-            }
-           if (!empty($request->input('owner_number'))) {
-                $obj->owner_number = $request->input('owner_number');
-            }
-              if (!empty($request->input('company_document'))) {
-                $obj->company_document = $request->input('company_document');
-            }
-
             if (!empty($request->input('vehicle_id'))) {
                 $obj->vehicle_id = $request->input('vehicle_id');
             }
@@ -299,8 +290,17 @@ class DriverController extends Controller
             if (!empty($request->input('salary_commission_exclusive'))) {
                 $obj->salary_commission_exclusive = ($request->input('salary_commission_exclusive'));
             }
+              if (!empty($request->input('postal_code'))) {
+                $obj->postal_code = ($request->input('postal_code'));
+            }
+                if (!empty($request->input('city'))) {
+                $obj->city = ($request->input('city'));
+            }
             if (!empty($request->input('card'))) {
                 $obj->card = ($request->input('card'));
+            }
+             if (!empty($request->input('company_id'))) {
+                $obj->company_id = ($request->input('company_id'));
             }
 
             if ($file = $request->file('profile_picture')) {
@@ -311,15 +311,6 @@ class DriverController extends Controller
                 $video_url = $upload_path . $video_full_name;
                 $file->move($upload_path, $video_url);
                 $obj->profile_picture = $video_url;
-            }
-            if ($file = $request->file('company_document')) {
-                $video_name = md5(rand(1000, 10000));
-                $ext = strtolower($file->getClientOriginalExtension());
-                $video_full_name = $video_name . '.' . $ext;
-                $upload_path = 'companyDocument/';
-                $video_url = $upload_path . $video_full_name;
-                $file->move($upload_path, $video_url);
-                $obj->company_document = $video_url;
             }
 
             if ($files = $request->file('vehicle_image')) { // Assuming 'vehicle_images' is the input name for multiple files
@@ -333,8 +324,6 @@ class DriverController extends Controller
                 }
                 $obj->vehicle_image = $imageUrls; // Update the array of image URLs in the object
             }
-
-
             if ($file = $request->file('bank_upload_document')) {
                 $video_name = md5(rand(1000, 10000));
                 $ext = strtolower($file->getClientOriginalExtension());
@@ -344,9 +333,7 @@ class DriverController extends Controller
                 $file->move($upload_path, $video_url);
                 $obj->bank_upload_document = $video_url;
             }
-
              $obj->save();
-
         }
         return response()->json([
             'success' => true,
@@ -363,7 +350,7 @@ class DriverController extends Controller
             $program->delete();
             return response()->json([
                 'success' => true,
-                'message' => ' delete successfuly',
+                'message' => 'delete successfuly',
             ], 200);
         } else {
             return response()->json([

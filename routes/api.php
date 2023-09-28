@@ -61,10 +61,12 @@ Route::get('/ApproedDriver', [App\Http\Controllers\api\DriverController::class, 
 Route::apiResource('vehicle', App\Http\Controllers\api\VehicleController::class);
 Route::post('/vehicleUpdate/{id}', [App\Http\Controllers\api\VehicleController::class, 'update']);
 Route::get('/notAssign', [App\Http\Controllers\api\VehicleController::class, 'notAssign']);
+Route::get('/B2BShow/{id}', [App\Http\Controllers\api\VehicleController::class, 'B2BShow']);
 
          //B2b
 Route::get('/B2BIndex', [App\Http\Controllers\api\VehicleController::class, 'B2BIndex']);
 Route::get('/B2BgetDriver', [App\Http\Controllers\api\DriverController::class, 'B2BIndex']);
+Route::get('/B2Bshowdriver/{id}', [App\Http\Controllers\api\DriverController::class, 'B2Bshow']);
 
         //  Expense
 Route::apiResource('expense', App\Http\Controllers\api\ExpenseController::class);
@@ -90,6 +92,9 @@ Route::get('/reportshow/{id}', [App\Http\Controllers\api\InvoiceController::clas
 Route::apiResource('service', App\Http\Controllers\api\ServiceController::class);
 Route::post('/serviceUpdate/{id}', [App\Http\Controllers\api\ServiceController::class, 'update']);
 
+/// company
+Route::apiResource('company', App\Http\Controllers\api\CompanyController::class);
+Route::post('/companyUpdate/{id}', [App\Http\Controllers\api\CompanyController::class, 'update']);
 
 
 

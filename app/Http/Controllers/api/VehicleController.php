@@ -14,7 +14,7 @@ class VehicleController extends Controller
 
     public function index()
     {
-        $data = Vehicle::with('driver:id,vehicle_id,name,last_name')->get();
+        $data = Vehicle::with('driver:id,vehicle_id,name,last_name' ,'company')->get();
         foreach ($data as $Driver) {
             $Driver->image = json_decode($Driver->image); // Decode the JSON-encoded location string
         }
@@ -51,7 +51,7 @@ class VehicleController extends Controller
 
     public function B2BIndex()
     {
-        $data = Vehicle::where('type', 'b2b')->get();
+        $data = Vehicle::with('company')->where('type','b2b')->get();
         foreach ($data as $Driver) {
             $Driver->image = json_decode($Driver->image); // Decode the JSON-encoded location string
         }
@@ -64,6 +64,23 @@ class VehicleController extends Controller
             'data' => $data,
         ]);
     }
+
+    
+    public function B2BShow($id)
+    {
+        $program = Vehicle::with('company')->where('id',$id)->first();
+        $program->image = json_decode($program->image); // Decode the JSON-encoded location string
+        if (is_null($program)) {
+            return response()->json('Data not found', 404);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $program,
+        ]);
+    }
+
+
+    
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -89,15 +106,6 @@ class VehicleController extends Controller
                     $imageUrls[] = $image_url; // Store the image URL in the array
                 }
                 $vehicles->image = $imageUrls; // Store the array of image URLs in the driver object
-            }
-            if ($file = $request->file('company_document')) {
-                $video_name = md5(rand(1000, 10000));
-                $ext = strtolower($file->getClientOriginalExtension());
-                $video_full_name = $video_name . '.' . $ext;
-                $upload_path = 'vehicleCompanyImage/';
-                $video_url = $upload_path . $video_full_name;
-                $file->move($upload_path, $video_url);
-                $vehicles->company_document = $video_url;
             }
             $vehicles->save();
             return response()->json([
@@ -203,7 +211,9 @@ class VehicleController extends Controller
             if (!empty($request->input('other_expense'))) {
                 $obj->other_expense = $request->input('other_expense');
             }
-
+            if (!empty($request->input('company_id'))) {
+                $obj->company_id = $request->input('company_id');
+            }
             if ($files = $request->file('image')) { // Assuming 'vehicle_images' is the input name for multiple files
                 $imageUrls = []; // Initialize an array to store the image URLs
                 foreach ($files as $file) {

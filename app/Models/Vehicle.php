@@ -13,5 +13,9 @@ class Vehicle extends Model
     public function driver() {
         return $this->belongsTo(User::class, 'id', 'vehicle_id');  
     }
+    
+    public function company() {
+        return $this->hasOne(Company::class, 'id', 'company_id');  
+    }
 
 }
