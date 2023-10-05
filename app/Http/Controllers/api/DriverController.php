@@ -35,12 +35,13 @@ public function index()
 
       public function ApproedDriver()
     {
-        $data = User::where(function ($query) {
-            $query->where('type', 'bolt')
-                ->orWhere('type', 'uber');
-        })
-        ->where('status', 'Approved')
-        ->get();
+        // $data = User::where(function ($query) {
+        //     $query->where('type', 'bolt')
+        //         ->orWhere('type', 'uber');
+        // })
+        // ->where('status', 'Approved')
+        // ->get();
+        $data = User::where('status', 'Approved')->get();
     
         foreach ($data as $Driver) {
             $Driver->vehicle_image = json_decode($Driver->vehicle_image); // Decode the JSON-encoded location string

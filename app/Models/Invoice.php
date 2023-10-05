@@ -15,5 +15,8 @@ class Invoice extends Model
     public function driver() {
         return $this->hasOne(User::class, 'id', 'user_id');  
     }
+    public function company() {
+        return $this->belongsTo(Company::class, 'id', 'company_id');  
+    }
 
 }

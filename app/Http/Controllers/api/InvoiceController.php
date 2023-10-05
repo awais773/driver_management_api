@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Validator;
 class InvoiceController extends Controller
 {
 
-
-
-
     public function show($id)
     {
         $program = Invoice::with('driver')->where('id',$id)->first();
@@ -28,9 +25,6 @@ class InvoiceController extends Controller
             'data' => $program,
         ]);
     }
-
-
-    
 
     public function reportshow($id)
     {
