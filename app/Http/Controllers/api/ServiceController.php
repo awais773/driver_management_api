@@ -87,6 +87,11 @@ class ServiceController extends Controller
             if (!empty($request->input('category'))) {
                 $obj->category = $request->input('category');
             }
+            if (!empty($request->input('total_life_kilometer'))) {
+                $obj->total_life_kilometer = $request->input('total_life_kilometer');
+            }
+
+            
             if ($file = $request->file('image')) {
                 $video_name = md5(rand(1000, 10000));
                 $ext = strtolower($file->getClientOriginalExtension());

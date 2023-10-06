@@ -95,6 +95,10 @@ class CompanyController extends Controller
                 $obj->user_id = $request->input('user_id');
             }
 
+            if (!empty($request->input('category'))) {
+                $obj->category = $request->input('category');
+            }
+
             if ($file = $request->file('company_document')) {
                 $video_name = md5(rand(1000, 10000));
                 $ext = strtolower($file->getClientOriginalExtension());

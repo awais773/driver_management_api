@@ -147,20 +147,20 @@ class ExpenseController extends Controller
                 $Expense->image = $video_url;
             }
             $Expense->save();    
-            $vehicleId = User::where('id', $request->user_id)->value('vehicle_id');
-            if (is_null($vehicleId)) {
-                return response()->json('Driver does not have a vehicle assigned');
-            }
-            $vehicle = Vehicle::find($vehicleId);    
-            if ($vehicle) {
-                if (!empty($request->input('service_meter_reading'))) {
-                    $vehicle->service_meter_reading = $request->input('service_meter_reading');
-                }
-                if (!empty($request->input('total_life_kilometer'))) {
-                    $vehicle->total_life_kilometer = $request->input('total_life_kilometer');
-                }
-                $vehicle->save();
-            }
+            // $vehicleId = User::where('id', $request->user_id)->value('vehicle_id');
+            // if (is_null($vehicleId)) {
+            //     return response()->json('Driver does not have a vehicle assigned');
+            // }
+            // $vehicle = Vehicle::find($vehicleId);    
+            // if ($vehicle) {
+            //     if (!empty($request->input('service_meter_reading'))) {
+            //         $vehicle->service_meter_reading = $request->input('service_meter_reading');
+            //     }
+            //     if (!empty($request->input('total_life_kilometer'))) {
+            //         $vehicle->total_life_kilometer = $request->input('total_life_kilometer');
+            //     }
+            //     $vehicle->save();
+            // }
     
             return response()->json([
                 'success' => true,
@@ -256,11 +256,11 @@ class ExpenseController extends Controller
             if (!empty($request->input('card'))) {
                 $obj->card = $request->input('card');
             }
-            if (!empty($request->input('meter_reading'))) {
-                $obj->meter_reading = $request->input('meter_reading');
+           if (!empty($request->input('comment'))) {
+                $obj->comment = $request->input('comment');
             }
-            if (!empty($request->input('total_life_kilometer'))) {
-                $obj->total_life_kilometer = $request->input('total_life_kilometer');
+            if (!empty($request->input('amount_type'))) {
+                $obj->amount_type = $request->input('amount_type');
             }
 
             if ($file = $request->file('image')) {
