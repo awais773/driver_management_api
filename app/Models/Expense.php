@@ -16,4 +16,8 @@ class Expense extends Model
         return $this->hasOne(User::class, 'id', 'user_id');  
     }
 
+    public function Company() {
+        return $this->belongsTo(Company::class);  
+    }
+
 }

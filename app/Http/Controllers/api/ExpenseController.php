@@ -24,7 +24,7 @@ class ExpenseController extends Controller
 
     public function index()
     {
-        $data = Expense::with('driver')->select(
+        $data = Expense::with('driver.company')->select(
             'user_id',
             DB::raw('SUM(CASE WHEN card = "Payable" AND status = "Approved" THEN amount ELSE 0 END) as total_payable'),
             DB::raw('SUM(CASE WHEN card = "Receivable" AND status = "Approved" THEN amount ELSE 0 END) as total_receivable'),
@@ -587,10 +587,20 @@ class ExpenseController extends Controller
                     ]);
 
                 // Insert the record into the "bolts" table
-                 DB::table('bolts')->insert([
-                    'name' => $username,
+              
+                DB::table('ubers')->insert([
+                    'name' => $username,  
                     'last_name' => $last_name,
                     'bolt_earning' => $amount,
+                    'total' => $amount,
+                    'moms_6_tax' => $amount * 0.06,
+                    'net' => $amount - ($amount * 0.06),
+                    'admin' => (($amount - $amount * 0.06)) * 0.05,
+                    'net_payable' =>((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)),
+                    'moms_25_tax' => (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
+                    'net_total' => ((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)) - (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
+                    'start_date' => $request->start_date,
+                    'end_date' => $request->end_date,
                 ]);
             } elseif ($type === 'uber') {
                 $currentUberEarning = $user->uber_earning;
@@ -606,11 +616,20 @@ class ExpenseController extends Controller
                     ]);
 
                 // Insert the record into the "ubers" table
-                   DB::table('ubers')->insert([
-                    'name' => $username,
+                
+                    DB::table('ubers')->insert([
+                    'name' => $username,  
                     'last_name' => $last_name,
                     'uber_earning' => $amount,
+                    'total' => $amount,
+                    'moms_6_tax' => $amount * 0.06,
+                    'net' => $amount - ($amount * 0.06),
+                    'admin' => (($amount - $amount * 0.06)) * 0.05,
+                    'net_payable' =>((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)),
+                    'moms_25_tax' => (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
+                    'net_total' => ((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)) - (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
                 ]);
+                
             }
             // Add more conditions for other "type" values if needed
         }
