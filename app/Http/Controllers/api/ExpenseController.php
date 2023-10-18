@@ -79,7 +79,8 @@ class ExpenseController extends Controller
             'remaining_reciveable' => $request->remaining_reciveable,
             'tax' => $request->tax,
             'total_inclusive_tex' => $request->total_inclusive_tex,
-
+            'commission_salaryComputed' => $request->commission_salaryComputed,
+            'hourly_salaryComputed' => $request->hourly_salaryComputed,
         ]);  
         $Expense->save();    
   
@@ -560,11 +561,8 @@ class ExpenseController extends Controller
     foreach ($csvData as $data) {
         $username = $data[0];
         $last_name = $data[1];
-        $amount = $data[2]; // Assuming the amount is in the third column
-
-        // Extract other fields from $data array
-
-        // Retrieve the user based on their username, last_name, and type
+        $amount = $data[2];
+        $driver_hourly_rate = isset($data[3]) ? $data[3] : null; // Check if the element exists, set to null if not
         $user = DB::table('users')
             ->where('name', $username)
             ->where('last_name', $last_name)
@@ -574,16 +572,16 @@ class ExpenseController extends Controller
         if ($user) {
             // Depending on the "type" from the request, update the corresponding field
             if ($type === 'bolt') {
-                $currentBoltEarning = $user->bolt_earning;
-                // Calculate the new 'bolt_earning' value by adding the new amount
-                $newBoltEarning = $currentBoltEarning + $amount;
+                // $currentBoltEarning = $user->bolt_earning;
+                // $newBoltEarning = $currentBoltEarning + $amount;
 
                 // Update the user's 'bolt_earning' with the new value
                 DB::table('users')
                     ->where('name', $username)
                     ->where('last_name', $last_name)
                     ->update([
-                        'bolt_earning' => $newBoltEarning,
+                        'bolt_earning' => $amount,
+                        'driver_hourly_rate' => $driver_hourly_rate,
                     ]);
 
                 // Insert the record into the "bolts" table
@@ -598,21 +596,21 @@ class ExpenseController extends Controller
                     'admin' => (($amount - $amount * 0.06)) * 0.05,
                     'net_payable' =>((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)),
                     'moms_25_tax' => (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
-                    'net_total' => ((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)) - (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
+                    'net_total' => ((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)) + (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
                     'start_date' => $request->start_date,
                     'end_date' => $request->end_date,
                 ]);
             } elseif ($type === 'uber') {
-                $currentUberEarning = $user->uber_earning;
-                // Calculate the new 'uber_earning' value by adding the new amount
-                $newUberEarning = $currentUberEarning + $amount;
+                // $currentUberEarning = $user->uber_earning;
+                // $newUberEarning = $currentUberEarning + $amount;
 
                 // Update the user's 'uber_earning' with the new value
                 DB::table('users')
                     ->where('name', $username)
                     ->where('last_name', $last_name)
                     ->update([
-                        'uber_earning' => $newUberEarning,
+                        'uber_earning' => $amount,
+                        'driver_hourly_rate' => $driver_hourly_rate,
                     ]);
 
                 // Insert the record into the "ubers" table
@@ -627,7 +625,9 @@ class ExpenseController extends Controller
                     'admin' => (($amount - $amount * 0.06)) * 0.05,
                     'net_payable' =>((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)),
                     'moms_25_tax' => (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
-                    'net_total' => ((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)) - (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
+                    'net_total' => ((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)) + (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
+                    'start_date' => $request->start_date,
+                    'end_date' => $request->end_date,
                 ]);
                 
             }
@@ -649,9 +649,6 @@ class ExpenseController extends Controller
 
     return response()->json(['message' => 'User records updated successfully']);
 }
-
-
-
 
 
     public function fileGet()
@@ -685,7 +682,6 @@ class ExpenseController extends Controller
             ]);
         }
     }
-
 
 
     public function uberdata()

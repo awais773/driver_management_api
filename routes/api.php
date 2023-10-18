@@ -91,6 +91,8 @@ Route::get('/reportshow/{id}', [App\Http\Controllers\api\InvoiceController::clas
        //  Service
 Route::apiResource('service', App\Http\Controllers\api\ServiceController::class);
 Route::post('/serviceUpdate/{id}', [App\Http\Controllers\api\ServiceController::class, 'update']);
+Route::get('/allGet', [App\Http\Controllers\api\ServiceController::class, 'allGet']);
+Route::get('/showAll/{id}', [App\Http\Controllers\api\ServiceController::class, 'showAll']);
 
 /// company
 Route::apiResource('company', App\Http\Controllers\api\CompanyController::class);

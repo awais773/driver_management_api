@@ -63,6 +63,7 @@ class ServiceController extends Controller
     public function show($id)
     {
         $program = Service::with('vehicle')->where('id',$id)->first();
+        dd($program);
         if (is_null($program)) {
             return response()->json('Data not found', 404);
         }
@@ -139,9 +140,10 @@ class ServiceController extends Controller
 
 
 
-    public function index()
+    public function allGet()
     {
-        $data = Service::with('vehicle')->get();
+        $data = Service::with('vehicle')
+        ->get();
         if (is_null($data)) {
             return response()->json('data not found',);
         }
@@ -151,7 +153,43 @@ class ServiceController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function Index()
+    {
+        $data = Service::with('vehicle')
+            ->select('vehicle_id', DB::raw('MAX(id) as max_id'))
+            ->groupBy('vehicle_id')
+            ->get();
     
+        if ($data->isEmpty()) {
+            return response()->json('data not found');
+        }
+    
+        // Now, you can fetch the complete records using the obtained max_id values.
+        $completeData = Service::with('vehicle')
+            ->whereIn('id', $data->pluck('max_id'))
+            ->get();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'All Data successful',
+            'data' => $completeData,
+        ]);
+    }
+    
+
+    public function showAll($id)
+    {
+        $program = Service::with('vehicle')->where('vehicle_id',$id)->get();
+        dd($program);
+        if (is_null($program)) {
+            return response()->json('Data not found', 404);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $program,
+        ]);
+    }
     
 
 }

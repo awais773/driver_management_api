@@ -14,7 +14,8 @@ class VehicleController extends Controller
 
     public function index()
     {
-        $data = Vehicle::with('driver:id,vehicle_id,name,last_name' ,'company')->get();
+        $data = Vehicle::with('driver:id,vehicle_id,name,last_name' ,'company')->where('type', '!=', 'b2b')->orWhereNull('type')
+        ->get();
         foreach ($data as $Driver) {
             $Driver->image = json_decode($Driver->image); // Decode the JSON-encoded location string
         }
@@ -30,7 +31,7 @@ class VehicleController extends Controller
 
     public function notAssign()
     {
-        $data = Vehicle::with('driver:id,vehicle_id,name,last_name')
+        $data = Vehicle::with('driver:id,vehicle_id,name,last_name','company' )
             ->whereDoesntHave('driver', function ($query) {
                 $query->whereNotNull('vehicle_id');
             })
