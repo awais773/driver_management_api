@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\api;
 
 use App\Models\Bolt;
-use App\Models\Invoice;
 use App\Models\Uber;
 use App\Models\User;
+use App\Models\Company;
 use App\Models\Expense;
+use App\Models\Invoice;
 use App\Models\Service;
 use App\Models\Vehicle;
 use App\Models\ImportFile;
@@ -300,7 +301,7 @@ class ExpenseController extends Controller
         }
     }
 
-
+ 
 
     public function detailsExpensive($id)
     {
@@ -710,4 +711,34 @@ class ExpenseController extends Controller
         ]);
     }
 
-}
+    public function dashboard()
+    {
+        $driver = User::where('type', 'bolt')
+        ->orWhere('type', 'uber')
+        ->count();
+        $driverb2b = User::where('type','b2b')->count();
+        $vehicle = Vehicle::where('type', '!=', 'b2b')->orWhereNull('type')
+        ->count();
+        $vehicleb2b = Vehicle::where('type','b2b')->count();
+        $company = Company::count();
+        $expense = Expense::count();
+        $total_earning = Uber::sum('net_total');
+        $data = [
+            'driver' => $driver,
+            'driverb2b' => $driverb2b,
+            'vehicle' => $vehicle,
+            'vehicleb2b' => $vehicleb2b,
+            'company' => $company,
+            'expense' => $expense,
+            'total_earning' => $total_earning,
+        ];
+        return response()->json([
+            'success' => true,
+            'message' => 'All Data susccessfull',
+            'data' => $data,
+        ]);
+    }
+
+
+
+}                   

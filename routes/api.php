@@ -81,6 +81,9 @@ Route::get('/paymentShow/{id}', [App\Http\Controllers\api\ExpenseController::cla
 Route::get('/VehicleExpense/{id}', [App\Http\Controllers\api\ExpenseController::class, 'VehicleExpense']);
 Route::post('/reportAdd', [App\Http\Controllers\api\ExpenseController::class, 'reportAdd']);
 
+       //dashboard
+Route::get('/dashboard', [App\Http\Controllers\api\ExpenseController::class, 'dashboard']);
+
 
         //  invoice
 Route::apiResource('invoice', App\Http\Controllers\api\InvoiceController::class);
