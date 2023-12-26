@@ -29,6 +29,23 @@ class VehicleController extends Controller
         ]);
     }
 
+
+    public function deltils($id)
+    {
+        $data = Vehicle::with('driver:id,vehicle_id,name,last_name' ,'company')->
+         where('id' ,$id)->get();
+         foreach ($data as $Driver) {
+            $Driver->image = json_decode($Driver->image); // Decode the JSON-encoded location string
+        }
+        if (is_null($data)) {
+            return response()->json('data not found',);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'All Data susccessfull',
+            'data' => $data,
+        ]);
+    }
     public function notAssign()
     {
         $data = Vehicle::with('driver:id,vehicle_id,name,last_name','company' )

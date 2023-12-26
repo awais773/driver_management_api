@@ -146,7 +146,7 @@ public function index()
 
     public function show($id)
     {
-        $program = User::find($id);
+        $program = User::with('company:id,company_name')->find($id);
         $program->vehicle_image = json_decode($program->vehicle_image); // Decode the JSON-encoded location string
 
         if (is_null($program)) {
@@ -198,15 +198,27 @@ public function index()
             if (!empty($request->input('salary'))) {
                 $obj->salary = $request->input('salary');
             }
-             if (!empty($request->input('salary_fix'))) {
-                $obj->salary_fix = $request->input('salary_fix');
-            }
-             if (!empty($request->input('salary_commission'))) {
-                $obj->salary_commission = $request->input('salary_commission');
-            }
-             if (!empty($request->input('hourly_enter_amount'))) {
-                $obj->hourly_enter_amount = $request->input('hourly_enter_amount');
-            }
+            $obj->salary_fix = $request->input('salary_fix') ?? null;
+            $obj->salary_commission = $request->input('salary_commission') ?? null;
+            $obj->hourly_enter_amount = $request->input('hourly_enter_amount') ?? null;
+            
+            // Set other salary fields to null based on the updated field
+            switch (true) {
+                case !is_null($obj->salary_fix):
+                    $obj->salary_commission = null;
+                    $obj->hourly_enter_amount = null;
+                    break;
+            
+                case !is_null($obj->salary_commission):
+                    $obj->salary_fix = null;
+                    $obj->hourly_enter_amount = null;
+                    break;
+            
+                case !is_null($obj->hourly_enter_amount):
+                    $obj->salary_fix = null;
+                    $obj->salary_commission = null;
+                    break;
+            }            
             if (!empty($request->input('bank_name'))) {
                 $obj->bank_name = $request->input('bank_name');
             }

@@ -112,6 +112,20 @@ class InvoiceController extends Controller
             'data' => $data,
         ]);
     }
+
+
+    public function driverInvoice($id)
+    {
+        $data = Invoice::with('driver')->where('user_id',$id)->get();
+        if (is_null($data)) {
+            return response()->json('data not found',);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'All Data susccessfull',
+            'data' => $data,
+        ]);
+    }
     
     
 

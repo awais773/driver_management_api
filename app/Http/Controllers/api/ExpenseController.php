@@ -45,6 +45,32 @@ class ExpenseController extends Controller
         ]);
     }
 
+
+    public function driverDetails($user_id)
+    {
+        $data = Expense::with('driver.company')
+            ->where('user_id', $user_id) 
+            ->select(
+                'user_id',
+                DB::raw('SUM(CASE WHEN card = "Payable" AND status = "Approved" THEN amount ELSE 0 END) as total_payable'),
+                DB::raw('SUM(CASE WHEN card = "Receivable" AND status = "Approved" THEN amount ELSE 0 END) as total_receivable'),
+                DB::raw('SUM(CASE WHEN status = "Pending" THEN 1 ELSE 0 END) as total_pending')
+            )
+            ->groupBy('user_id')
+            ->get();
+    
+        if ($data->isEmpty()) {
+            return response()->json(['success' => true, 'message' => 'Data not found']);
+        }
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Data retrieved successfully',
+            'data' => $data,
+        ]);
+    }
+    
+
     public function paymentShow(Request $request, $id)
     {
         $data = Expense::with('driver')->select(
@@ -573,15 +599,15 @@ class ExpenseController extends Controller
         if ($user) {
             // Depending on the "type" from the request, update the corresponding field
             if ($type === 'bolt') {
-                // $currentBoltEarning = $user->bolt_earning;
-                // $newBoltEarning = $currentBoltEarning + $amount;
+                $currentBoltEarning = $user->bolt_earning;
+                $newBoltEarning = $currentBoltEarning + $amount;
 
                 // Update the user's 'bolt_earning' with the new value
                 DB::table('users')
                     ->where('name', $username)
                     ->where('last_name', $last_name)
                     ->update([
-                        'bolt_earning' => $amount,
+                        'bolt_earning' => $newBoltEarning,
                         'driver_hourly_rate' => $driver_hourly_rate,
                     ]);
 
@@ -600,17 +626,18 @@ class ExpenseController extends Controller
                     'net_total' => ((($amount - $amount * 0.06)) - ((($amount - $amount * 0.06)) * 0.05)) + (($amount - ($amount * 0.06) - ((($amount - $amount * 0.06)) * 0.05) ) * 0.25),
                     'start_date' => $request->start_date,
                     'end_date' => $request->end_date,
+
                 ]);
             } elseif ($type === 'uber') {
-                // $currentUberEarning = $user->uber_earning;
-                // $newUberEarning = $currentUberEarning + $amount;
+                $currentUberEarning = $user->uber_earning;
+                $newUberEarning = $currentUberEarning + $amount;
 
                 // Update the user's 'uber_earning' with the new value
                 DB::table('users')
                     ->where('name', $username)
                     ->where('last_name', $last_name)
                     ->update([
-                        'uber_earning' => $amount,
+                        'uber_earning' => $newUberEarning,
                         'driver_hourly_rate' => $driver_hourly_rate,
                     ]);
 
@@ -687,7 +714,7 @@ class ExpenseController extends Controller
 
     public function uberdata()
     {
-        $data = Uber::get();
+        $data = Uber::latest()->get();
         if (is_null($data)) {
             return response()->json('data not found',);
         }
@@ -697,6 +724,24 @@ class ExpenseController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function driverUber($name, $last_name)
+{
+    $data = Uber::where('name', $name)
+                ->where('last_name', $last_name)
+                ->get();
+
+    if (is_null($data)) {
+        return response()->json('Data not found', 404);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Data retrieved successfully',
+        'data' => $data,
+    ]);
+}
+
 
     public function boltdata()
     {
@@ -738,7 +783,110 @@ class ExpenseController extends Controller
             'data' => $data,
         ]);
     }
+    public function getMonthlyexpense()
+    {
+        $monthlyEarnings = DB::table(DB::raw('(SELECT 1 as month UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12) as months'))
+            ->leftJoin('expenses', function($join) {
+                $join->on(DB::raw('MONTH(expenses.created_at)'), '=', 'months.month');
+            })
+            ->select(
+                'months.month',
+                DB::raw('COALESCE(SUM(amount), 0) as expense')
+            )
+            ->groupBy('months.month')
+            ->get();
+        
+        return response()->json($monthlyEarnings);
+    }
 
+    public function getMonthlyearning()
+    {
+        $monthlyEarnings = DB::table(DB::raw('(SELECT 1 as month UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12) as months'))
+            ->leftJoin('ubers', function($join) {
+                $join->on(DB::raw('MONTH(ubers.created_at)'), '=', 'months.month');
+            })
+            ->select(
+                'months.month',
+                DB::raw('COALESCE(SUM(net_total), 0) as earning')
+            )
+            ->groupBy('months.month')
+            ->get();
+        
+        return response()->json($monthlyEarnings);
+    }
+
+
+    public function calculateEfficiency()
+    {
+        $users = User::select('id', 'uber_earning', 'bolt_earning','name','last_name')->where('status', '!=', 'admin') // Exclude users with the status "admin"
+        ->get();
+        $efficiencyData = [];
+    
+        foreach ($users as $user) {
+            $uberEarnings = $user->uber_earning;
+            $botEarnings = $user->bolt_earning;
+            // $userExpenses = Expense::where('user_id', $user->id)->orWhere('status','Approved') ->sum('amount');
+            $userExpenses = Expense::where('user_id', $user->id)
+    ->where('category', 'Fuel')
+    ->where('status', 'Approved')
+    ->sum('amount');
+            // Check if the total earnings are greater than zero before calculating efficiency
+            if ($uberEarnings + $botEarnings > 0) {
+                $efficiency = (($uberEarnings + $botEarnings - $userExpenses) / ($uberEarnings + $botEarnings)) * 100;
+            } else {
+                // Handle the ca se where total earnings are zero or negative
+                $efficiency = 0; // or any other suitable default value
+            }
+    
+            $efficiencyData[] = [
+                'driver' => $user, 
+                'total_efficiency' => $efficiency,
+                'total_earning' => $uberEarnings + $botEarnings,
+                'total_expense' => $userExpenses,
+                'total' => $uberEarnings + $botEarnings - $userExpenses,
+            ];
+        }
+    
+        return response()->json(['data' => $efficiencyData]);
+    }
+    
+
+    public function driverEfficiency($id)
+    {
+        $users = User::select('id', 'uber_earning', 'bolt_earning','name','last_name')->where('id',$id) // Exclude users with the status "admin"
+        ->get();
+        $efficiencyData = [];
+    
+        foreach ($users as $user) {
+            $uberEarnings = $user->uber_earning;
+            $botEarnings = $user->bolt_earning;
+            $userExpenses = Expense::where('user_id', $user->id)->orWhere('status','Approved') ->sum('amount');
+            
+            // Check if the total earnings are greater than zero before calculating efficiency
+            if ($uberEarnings + $botEarnings > 0) {
+                $efficiency = (($uberEarnings + $botEarnings - $userExpenses) / ($uberEarnings + $botEarnings)) * 100;
+            } else {
+                // Handle the ca se where total earnings are zero or negative
+                $efficiency = 0; // or any other suitable default value
+            }
+    
+            $efficiencyData[] = [
+                'driver' => $user, 
+                'total_efficiency' => $efficiency,
+                'total_earning' => $uberEarnings + $botEarnings,
+                'total_expense' => $userExpenses,
+                'total' => $uberEarnings + $botEarnings - $userExpenses,
+            ];
+        }
+    
+        return response()->json(['data' => $efficiencyData]);
+    }
+    
+   
+
+
+    
+    
 
 
 }                   

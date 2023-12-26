@@ -63,7 +63,6 @@ class ServiceController extends Controller
     public function show($id)
     {
         $program = Service::with('vehicle')->where('id',$id)->first();
-        dd($program);
         if (is_null($program)) {
             return response()->json('Data not found', 404);
         }
@@ -181,7 +180,6 @@ class ServiceController extends Controller
     public function showAll($id)
     {
         $program = Service::with('vehicle')->where('vehicle_id',$id)->get();
-        dd($program);
         if (is_null($program)) {
             return response()->json('Data not found', 404);
         }
@@ -190,6 +188,32 @@ class ServiceController extends Controller
             'data' => $program,
         ]);
     }
+
+    public function driverMaintence($id)
+{
+    // Get the vehicle_id for the specified $id
+    $vehicleId = Service::with('vehicle')->where('id', $id)->value('vehicle_id');
+
+    if (!$vehicleId) {
+        return response()->json(['success' => false, 'message' => 'Service record not found']);
+    }
+
+    // Get the latest service record for the obtained vehicle_id
+    $latestServiceRecord = Service::with('vehicle')->where('vehicle_id', $vehicleId)
+        ->orderBy('id', 'desc')
+        ->get();
+
+    if (!$latestServiceRecord) {
+        return response()->json(['success' => false, 'message' => 'No service record found for the specified vehicle_id']);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Latest service record retrieved successfully',
+        'data' => $latestServiceRecord,
+    ]);
+}
+
     
 
 }

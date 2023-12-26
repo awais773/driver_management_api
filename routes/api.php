@@ -62,6 +62,7 @@ Route::apiResource('vehicle', App\Http\Controllers\api\VehicleController::class)
 Route::post('/vehicleUpdate/{id}', [App\Http\Controllers\api\VehicleController::class, 'update']);
 Route::get('/notAssign', [App\Http\Controllers\api\VehicleController::class, 'notAssign']);
 Route::get('/B2BShow/{id}', [App\Http\Controllers\api\VehicleController::class, 'B2BShow']);
+Route::get('/deltils/{id}', [App\Http\Controllers\api\VehicleController::class, 'deltils']);
 
          //B2b
 Route::get('/B2BIndex', [App\Http\Controllers\api\VehicleController::class, 'B2BIndex']);
@@ -80,6 +81,12 @@ Route::get('/boltdata', [App\Http\Controllers\api\ExpenseController::class, 'bol
 Route::get('/paymentShow/{id}', [App\Http\Controllers\api\ExpenseController::class, 'paymentShow']);
 Route::get('/VehicleExpense/{id}', [App\Http\Controllers\api\ExpenseController::class, 'VehicleExpense']);
 Route::post('/reportAdd', [App\Http\Controllers\api\ExpenseController::class, 'reportAdd']);
+Route::get('/getMonthlyexpense', [App\Http\Controllers\api\ExpenseController::class, 'getMonthlyexpense']);
+Route::get('/getMonthlyearning', [App\Http\Controllers\api\ExpenseController::class, 'getMonthlyearning']);
+Route::get('/calculateEfficiency', [App\Http\Controllers\api\ExpenseController::class, 'calculateEfficiency']);
+Route::get('/driverDetails/{id}', [App\Http\Controllers\api\ExpenseController::class, 'driverDetails']);
+Route::get('/driverEfficiency/{id}', [App\Http\Controllers\api\ExpenseController::class, 'driverEfficiency']);
+Route::get('/driverUber/{name}/{last_name}', [App\Http\Controllers\api\ExpenseController::class, 'driverUber']);
 
        //dashboard
 Route::get('/dashboard', [App\Http\Controllers\api\ExpenseController::class, 'dashboard']);
@@ -89,6 +96,7 @@ Route::get('/dashboard', [App\Http\Controllers\api\ExpenseController::class, 'da
 Route::apiResource('invoice', App\Http\Controllers\api\InvoiceController::class);
 Route::post('/invoiceUpdate/{id}', [App\Http\Controllers\api\InvoiceController::class, 'update']);
 Route::get('/reportshow/{id}', [App\Http\Controllers\api\InvoiceController::class, 'reportshow']);
+Route::get('/driverInvoice/{id}', [App\Http\Controllers\api\InvoiceController::class, 'driverInvoice']);
 
 
        //  Service
@@ -96,6 +104,7 @@ Route::apiResource('service', App\Http\Controllers\api\ServiceController::class)
 Route::post('/serviceUpdate/{id}', [App\Http\Controllers\api\ServiceController::class, 'update']);
 Route::get('/allGet', [App\Http\Controllers\api\ServiceController::class, 'allGet']);
 Route::get('/showAll/{id}', [App\Http\Controllers\api\ServiceController::class, 'showAll']);
+Route::get('/driverMaintence/{id}', [App\Http\Controllers\api\ServiceController::class, 'driverMaintence']);
 
 /// company
 Route::apiResource('company', App\Http\Controllers\api\CompanyController::class);
