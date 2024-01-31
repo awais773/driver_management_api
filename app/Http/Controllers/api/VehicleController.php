@@ -32,20 +32,25 @@ class VehicleController extends Controller
 
     public function deltils($id)
     {
-        $data = Vehicle::with('driver:id,vehicle_id,name,last_name' ,'company')->
-         where('id' ,$id)->get();
-         foreach ($data as $Driver) {
+        $data = Vehicle::with('driver:id,vehicle_id,name,last_name', 'company')
+            ->where('id', $id)
+            ->get();
+    
+            if ($data->isEmpty()) {
+                return response()->json(['success' => true, 'message' => 'Data not found']);
+            }
+    
+        foreach ($data as $Driver) {
             $Driver->image = json_decode($Driver->image); // Decode the JSON-encoded location string
         }
-        if (is_null($data)) {
-            return response()->json('data not found',);
-        }
+    
         return response()->json([
             'success' => true,
-            'message' => 'All Data susccessfull',
+            'message' => 'All Data successful',
             'data' => $data,
         ]);
     }
+    
     public function notAssign()
     {
         $data = Vehicle::with('driver:id,vehicle_id,name,last_name','company' )
@@ -102,14 +107,14 @@ class VehicleController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            // 'email' => 'required|string|email|max:255|unique:users',
+            'registration_number' => 'required|unique:vehicles',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 // 'message' => $validator->errors()->toJson()
-                'message' => 'Email already exist',
+                'message' => 'Registration Number already exist',
 
             ], 400);
         } {
@@ -150,7 +155,18 @@ class VehicleController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'registration_number' => 'required|unique:vehicles',
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                // 'message' => $validator->errors()->toJson()
+                'message' => 'Registration Number already exist',
+
+            ], 400);
+        } 
         $obj = Vehicle::find($id);
         if ($obj) {
             if (!empty($request->input('name'))) {
